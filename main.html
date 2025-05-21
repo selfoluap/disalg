@@ -1,0 +1,1064 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Distributed Algorithms Summary</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .content-section { display: none; }
+        .content-section.active { display: block; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; font-size: 0.9rem; }
+        th, td { border: 1px solid #d1d5db; padding: 0.75rem; text-align: left; vertical-align: top; }
+        th { background-color: #f3f4f6; font-weight: 600; color: #1f2937; }
+        td code, p code, li code { background-color: #e5e7eb; padding: 0.1rem 0.3rem; border-radius: 0.25rem; font-family: 'Courier New', Courier, monospace; font-size: 0.85em; color: #374151;}
+        h2 { font-size: 1.75rem; font-weight: 700; margin-bottom: 1rem; color: #0d9488; padding-bottom: 0.5rem; border-bottom: 2px solid #ccfbf1; }
+        h3 { font-size: 1.4rem; font-weight: 600; margin-top: 1.5rem; margin-bottom: 0.75rem; color: #0f766e; }
+        h4 { font-size: 1.15rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.5rem; color: #115e59; }
+        p { margin-bottom: 1rem; line-height: 1.6; }
+        ul { list-style-type: disc; margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        strong { font-weight: 600; }
+        #sidebar { scrollbar-width: thin; scrollbar-color: #0d9488 #1f2937; }
+        #sidebar::-webkit-scrollbar { width: 8px; }
+        #sidebar::-webkit-scrollbar-track { background: #1f2937; }
+        #sidebar::-webkit-scrollbar-thumb { background-color: #0d9488; border-radius: 4px; }
+        #main-content { scrollbar-width: thin; scrollbar-color: #a1a1aa #e5e7eb; }
+        #main-content::-webkit-scrollbar { width: 8px; }
+        #main-content::-webkit-scrollbar-track { background: #e5e7eb; }
+        #main-content::-webkit-scrollbar-thumb { background-color: #a1a1aa; border-radius: 4px; }
+
+        @media (max-width: 768px) {
+            #sidebar {
+                transition: transform 0.3s ease-in-out;
+            }
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-stone-100 text-gray-800">
+    <div class="flex flex-col md:flex-row min-h-screen">
+        <nav id="sidebar" class="w-72 bg-gray-900 text-stone-200 p-5 space-y-1.5 overflow-y-auto fixed inset-y-0 left-0 z-30 transform -translate-x-full md:translate-x-0 md:sticky shrink-0">
+            <h1 class="text-2xl font-bold mb-6 text-teal-400">Distributed Algorithms</h1>
+            <a href="#intro" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Introduction</a>
+            <a href="#message-passing" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Message Passing</a>
+            <a href="#snapshots" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Snapshots</a>
+            <a href="#rollback-recovery" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Rollback Recovery</a>
+            <a href="#waves" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Waves</a>
+            <a href="#deadlock-detection" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Deadlock Detection</a>
+            <a href="#termination-detection" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Termination Detection</a>
+            <a href="#garbage-collection" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Garbage Collection</a>
+            <a href="#routing" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Routing</a>
+            <a href="#election" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Election</a>
+            <a href="#anonymous-networks" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Anonymous Networks</a>
+            <a href="#fault-tolerance-consensus" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Fault Tolerance & Consensus</a>
+            <a href="#mutual-exclusion" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Mutual Exclusion</a>
+            <a href="#self-stabilization" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Self-stabilization</a>
+            <a href="#dynamic-networks" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Dynamic Networks</a>
+            <a href="#distributed-transactions" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Distributed Transactions</a>
+            <a href="#authentication" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Authentication</a>
+            <a href="#key-exchange" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Key Exchange</a>
+            <a href="#digital-signatures" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Digital Signatures</a>
+            <a href="#blockchains" class="block py-2 px-3 rounded-md hover:bg-teal-700 hover:text-white transition-colors duration-150">Blockchains</a>
+        </nav>
+
+        <button id="menu-toggle" class="md:hidden fixed top-4 left-4 z-40 p-2 bg-gray-900 text-white rounded-md shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+        </button>
+
+        <main id="main-content" class="flex-1 p-6 md:p-10 overflow-y-auto md:ml-72 bg-stone-50">
+            <div id="intro" class="content-section">
+                <h2>Chapter 1: Introduction</h2>
+                <p>This section introduces the fundamental concepts of distributed systems. Distributed systems, characterized by multiple compute nodes communicating across a network, present unique challenges distinct from uniprocessor environments. The inherent complexity arises from interleaved executions of events across different nodes, leading to non-determinism and the potential for race conditions where the outcome depends on the unpredictable order of concurrent operations.[1] The number of reachable configurations in such systems tends to grow exponentially with the number of nodes, making global state observation and reasoning particularly difficult. This absence of up-to-date global knowledge necessitates specialized algorithms for tasks like termination detection or consistent global snapshots.[1]</p>
+                <p>We explore the two primary communication paradigms: message passing and shared memory. Understanding their differences is crucial as it profoundly influences algorithmic design. The behavior of distributed algorithms is formally captured using transition systems, and properties like safety and liveness, along with invariants, are key to their verification and reasoning.</p>
+
+                <h3>Core Concepts</h3>
+                <p>Distributed systems primarily operate under two communication paradigms: message passing and shared memory. In a message-passing framework, compute nodes exchange information by sending messages through channels. This communication is typically asynchronous, meaning that the sending and receiving of a message are distinct events, and messages experience arbitrary but finite delays. Protocols are assumed to prevent message corruption, duplication, or loss, though channels are not necessarily FIFO (First-In, First-Out) unless explicitly enforced. Networks can be directed (unidirectional channels) or undirected (bidirectional channels) and are generally assumed to be strongly connected, ensuring a path between any two processes.[1]</p>
+                <p>Conversely, the shared-memory paradigm involves processes communicating via shared variables, often referred to as registers, in a main memory accessible by multiple processors. Hardware components like caches store local copies of data, requiring cache coherence protocols (e.g., MSI protocol with Modified, Shared, Invalid states) to maintain data consistency across caches. Operations on shared memory can be atomic, such as read-modify-write operations (e.g., test-and-set, get-and-increment, compare-and-set), which complete in a single, uninterruptible step.[1]</p>
+                <p>The fundamental distinction between message passing and shared memory is not merely a matter of implementation but profoundly influences algorithmic design. Message passing necessitates explicit coordination and knowledge dissemination, as processes only have local state awareness and information about messages in transit. This leads to algorithms that actively manage distributed knowledge, such as those for consistent snapshots, which must account for messages in transit. In contrast, shared memory offers a more direct access to a global-like state through shared variables, shifting the primary design concern to concurrency control, mutual exclusion, and cache coherence. For example, mutual exclusion in message-passing systems often involves token passing or complex request-reply protocols, whereas in shared memory, it typically relies on locks or atomic hardware operations. Understanding this divergence is crucial, as it explains why solutions to the same distributed problem can look vastly different across paradigms and why certain impossibility results may apply to one but not the other.[1]</p>
+                <p>The behavior of a distributed algorithm is formally captured by a transition system, which comprises a set of configurations, a binary transition relation (<code>→</code>) defining how the system evolves, and a set of initial configurations. An "execution" is a sequence of configurations starting from an initial state, either continuing indefinitely or ending in a terminal configuration where no further transitions are possible. A configuration is considered "reachable" if it can be part of such an execution.[1] Each configuration reflects the local states of processes and messages currently in transit. Transitions are driven by "events," which can be internal to a process, a message send, or a message receive. Processes capable of initiating events without external input are called "initiators"; an algorithm is "centralized" if it has exactly one initiator and "decentralized" if it has multiple.[1]</p>
+                <p>Assertions are predicates on algorithm configurations, evaluating to true or false in any given state. A "safety property" asserts that "something bad will never happen" and must hold true in every reachable configuration. A stronger form of safety property is an "invariant," which is true in all initial configurations and remains true after every transition. A significant advantage of invariants is that their proof does not require reasoning about reachability, allowing focus on local transitions.[1] In contrast, a "liveness property" expresses that "something good will eventually happen," without specifying a time bound. Liveness properties often depend on "fair executions," where any event that can occur infinitely often during an execution is indeed performed infinitely often. This concept is particularly relevant for probabilistic algorithms where certain infinite execution paths might have zero probability of occurring.[1]</p>
+                <p>The distinction between safety and liveness properties, and the utility of invariants, forms the bedrock of formal verification and reasoning in distributed systems. Given the inherent difficulty in observing or proving properties about the global state of a distributed system, invariants offer a powerful mechanism to decompose complex global proofs into manageable local checks. This approach is a common strategy in the design of many distributed algorithms. Liveness, however, often requires more intricate arguments, frequently involving probabilistic guarantees or assumptions about fairness. Understanding these foundational concepts is essential for evaluating the correctness and behavior of distributed algorithms, especially in exam scenarios where questions may probe proof strategies or the inherent challenges in guaranteeing certain properties.</p>
+            </div>
+
+            <div id="message-passing" class="content-section">
+                <h2>Sections 2.1-2.2: Message Passing Fundamentals</h2>
+                <p>This section delves into the fundamentals of message passing, a core communication paradigm in distributed systems. We explore how events are ordered logically using causal order and logical clocks, such as Lamport's Clocks and Vector Clocks, which are essential for reasoning about computations in asynchronous environments where physical time synchronization is not assumed.</p>
+                <p>In asynchronous distributed systems, events occurring at different processes are fundamentally independent and can happen in any order. To logically order these events, the concept of "causal order" is introduced. This binary relation, denoted <code>a < b</code>, signifies that event <code>a</code> must happen before event <code>b</code>. Causal order is the smallest relation satisfying three conditions: (1) events at the same process are ordered sequentially as they occur, (2) a message send event causally precedes its corresponding receive event, and (3) the relation is transitive (if <code>a < b</code> and <code>b < c</code>, then <code>a < c</code>).[1] Events that are distinct and not causally related are deemed "concurrent." Permutations of concurrent events do not alter the final outcome of an execution, collectively forming a "computation".[1]</p>
+                <p>The concept of causal order is fundamental to comprehending "what happened when" in an asynchronous distributed system, particularly in the absence of a global physical clock. The presence of concurrent events is precisely why distributed systems are complex; it necessitates algorithms that account for partial knowledge and various possible interleavings of operations. This inherent non-determinism means that a single logical "run" of a distributed algorithm can manifest in multiple physical "executions." This challenge of managing concurrency is a core difficulty in designing and verifying distributed algorithms, as it requires accounting for all valid event orderings. Algorithms like consistent snapshots directly address this by attempting to capture a coherent global state despite the underlying concurrency.</p>
+                <p>To impose a logical ordering on events without relying on physical time, "logical clocks" are employed. These clocks map event occurrences to values in a partially ordered set such that if <code>a</code> causally precedes <code>b</code>, then the clock value of <code>a</code> is less than the clock value of <code>b</code> (<code>a < b ⇒ C(a) < C(b)</code>).[1]</p>
+
+                <h3>Logical Clocks</h3>
+                <h4>Lamport's Clock (LC)</h4>
+                <p>This clock assigns to each event <code>a</code> an integer value <code>k</code>, representing the length of the longest causality chain ending at <code>a</code>. At runtime, for an internal or send event, <code>LC(a)</code> is computed as <code>k+1</code>, where <code>k</code> is the clock value of the previous event at the same process. For a receive event <code>a</code>, if <code>b</code> is the corresponding send event (whose clock value <code>LC(b)</code> is included in the message), then <code>LC(a)</code> is <code>max{k, LC(b)}+1</code>.[1] While Lamport's clock guarantees that <code>a < b</code> implies <code>LC(a) < LC(b)</code>, the converse is not true; concurrent events can still have ordered Lamport clock values.[1]</p>
+
+                <h4>Vector Clock (VC)</h4>
+                <p>The vector clock provides a stronger causal ordering. It maps each event in a computation to a unique vector value in <code>N^N</code> (where N is the number of processes), equipped with a partial order. <code>VC(a)</code> is a vector <code>(k0,..., kN-1)</code>, where each <code>ki</code> represents the length of the longest causality chain of events at process <code>pi</code> that causally precede or are <code>a</code> itself. A key property of vector clocks is that <code>a < b</code> if and only if <code>VC(a) < VC(b)</code> (meaning each component of <code>VC(a)</code> is less than or equal to the corresponding component of <code>VC(b)</code>, and at least one component is strictly less).[1] At runtime, for an event <code>a</code> at process <code>pi</code>, if <code>(k0,..., kN-1)</code> is the clock value of the previous event at <code>pi</code>:</p>
+                <ul>
+                    <li>For an internal or send event, <code>VC(a)</code> becomes <code>(k0,..., ki+1,..., kN-1)</code>.</li>
+                    <li>For a receive event, if <code>b</code> is the corresponding send event at <code>pj</code> with <code>VC(b) = (l0,..., lN-1)</code>, then <code>VC(a)</code> is computed by taking the maximum of corresponding components from the local clock and the received clock, and incrementing <code>pi</code>'s own component: <code>(max{k0, l0},..., ki+1,..., max{kN-1, lN-1})</code>.[1]</li>
+                </ul>
+                <p>The evolution from Lamport's clock to Vector clocks illustrates a fundamental trade-off between simplicity and information content in distributed systems. Lamport's clock, with its single integer value, offers a straightforward way to establish a total ordering that respects causality. However, it cannot precisely distinguish between causally related and concurrent events. Vector clocks, by maintaining a per-process component, capture a more complete causal history. This richer information enables precise detection of concurrency (where vector clock values are incomparable), which is crucial for algorithms that require a deep understanding of the global state or need to detect specific properties, such as in rollback recovery. The increased informational granularity of vector clocks, however, comes at the cost of larger message sizes and more complex computation, exemplifying a common design dilemma in distributed computing.</p>
+                <p>A common architectural pattern in distributed systems involves layering algorithms. The "basic algorithm" refers to the underlying distributed computation for which a service is being provided, such as a core application logic. The "control algorithm" is then layered on top to perform a specific management or monitoring task, such as taking a snapshot, detecting termination, or collecting garbage. This modular distinction is a design principle that simplifies both the development and analysis of complex distributed systems. It allows control algorithms to be designed and proven correct independently of the specific details of the basic algorithm, provided the basic algorithm adheres to a defined abstract interface (e.g., exposing states like "active" or "passive"). This modularity fosters reusability, as a single control algorithm can be applied to various basic computations, enhancing the manageability of large-scale systems.</p>
+
+                <h3>Table 1: Comparison of Lamport's and Vector Clocks</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Lamport's Clock (LC)</th>
+                            <th>Vector Clock (VC)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Value Representation</strong></td>
+                            <td>Single integer</td>
+                            <td>Vector of N integers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Ordering Property</strong></td>
+                            <td><code>a < b ⇒ C(a) < C(b)</code> (causality implies clock order)</td>
+                            <td><code>a < b ⇔ C(a) < C(b)</code> (causality equivalent to clock order)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Concurrency Detection</strong></td>
+                            <td>No (concurrent events can have ordered LC values)</td>
+                            <td>Yes (concurrent events have incomparable VC values)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Message Overhead</strong></td>
+                            <td>Low (single integer)</td>
+                            <td>High (vector of N integers)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Primary Use Cases</strong></td>
+                            <td>Simple event ordering, debugging</td>
+                            <td>Precise concurrency detection, consistent cuts, rollback recovery, distributed garbage collection</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="snapshots" class="content-section">
+                <h2>Sections 3.1-3.2: Snapshots</h2>
+                <p>This section discusses snapshot algorithms, which are mechanisms to capture a consistent global state of an ongoing distributed computation. This is vital for tasks like deadlock detection, termination detection, and fault recovery. We examine the Chandy-Lamport algorithm (for FIFO channels) and the Lai-Yang algorithm (for non-FIFO channels).</p>
+                <p>Snapshots in distributed systems are mechanisms to capture a consistent global state of an ongoing computation without requiring the entire system to halt. This global state comprises the local states of all processes and the messages currently in transit across channels. Such snapshots are invaluable for various purposes, including deadlock detection, termination detection, garbage collection, checkpointing for fault recovery, and debugging.[1]</p>
+                <p>The very necessity for "consistent snapshots" stems directly from the asynchronous and distributed nature of these systems. In a distributed environment, no single process possesses an instantaneous, global view of the system. Processes take their local observations at different real-time moments, and messages experience unpredictable delays in transit. This leads to the challenge of coordinating these local observations to form a globally coherent picture that could have plausibly existed at some point during the execution. Without careful design, a naive collection of local states could result in an "inconsistent snapshot," characterized by "orphan messages" (messages recorded as received or in transit by the receiver, but not as sent by the sender in its local state) or "lost messages" (messages recorded as sent by the sender, but neither received nor in transit according to the receiver).[1]</p>
+                <p>A snapshot is formally defined as "consistent" if it satisfies two critical properties:</p>
+                <ol>
+                    <li>No postsnapshot event (an event occurring at a process after its local snapshot) causally precedes a presnapshot event (an event occurring at a process before its local snapshot). This ensures that events are ordered logically within the snapshot.</li>
+                    <li>A basic message is included in a channel's state if and only if its send event occurred presnapshot and its corresponding receive event occurred postsnapshot. This property prevents both orphan and lost messages, ensuring that the snapshot accurately reflects a possible configuration of the ongoing computation.[1]</li>
+                </ol>
+                <p>Two prominent algorithms for achieving consistent snapshots are Chandy-Lamport and Lai-Yang.</p>
+
+                <h3>Chandy-Lamport Algorithm</h3>
+                <p>This algorithm is designed for directed networks and critically relies on the assumption that communication channels are FIFO (First-In, First-Out).[1] The mechanism operates as follows:</p>
+                <ul>
+                    <li>Any designated process can initiate the snapshot by recording its local state and then sending a special "marker" control message through all its outgoing channels.</li>
+                    <li>When a process that has not yet taken its local snapshot receives a marker message for the first time, it immediately records its own local state and, in turn, sends marker messages through all its outgoing channels.</li>
+                    <li>To capture the state of an incoming channel <code>pq</code>, process <code>q</code> records all basic messages it receives via <code>pq</code> <em>after</em> taking its local snapshot and <em>before</em> receiving a marker message from process <code>p</code>.[1]</li>
+                    <li>A process terminates its participation in the snapshot when it has received a marker message through all its incoming channels.[1]</li>
+                </ul>
+                <p>The elegance and relative simplicity of the Chandy-Lamport algorithm are direct consequences of its strong assumption of FIFO channels. This property simplifies the reasoning about message ordering and channel states. If channels are FIFO, a marker message cannot overtake any basic message sent before it on the same channel. This guarantees that if a receive event <code>b</code> at process <code>q</code> is considered "presnapshot" (meaning <code>q</code> has not yet received <code>p</code>'s marker), then the corresponding send event <code>a</code> at process <code>p</code> must also be "presnapshot" (because <code>p</code> could not have sent its marker to <code>q</code> before sending <code>a</code>). This inherent ordering greatly simplifies the logic for determining which messages are "in transit" and should be included in the channel state, ensuring consistency.[1] The algorithm requires <code>E</code> control messages (one per unidirectional channel) and completes within <code>O(D)</code> time units, where <code>D</code> is the network diameter.[1]</p>
+
+                <h3>Lai-Yang Algorithm</h3>
+                <p>In contrast to Chandy-Lamport, the Lai-Yang algorithm is designed for directed networks where channels are <strong>non-FIFO</strong>.[1] This generality comes with increased algorithmic complexity:</p>
+                <ul>
+                    <li>An initiator takes its local snapshot.</li>
+                    <li>Processes tag all outgoing basic messages: <code>false</code> if sent <em>before</em> their local snapshot, and <code>true</code> if sent <em>after</em> their local snapshot.</li>
+                    <li>If a process that has not yet taken a local snapshot receives a basic message with a <code>true</code> tag, it immediately takes its local snapshot <em>before</em> processing that message.[1]</li>
+                    <li>To compute the state of an incoming channel <code>pq</code>, process <code>q</code> records all basic messages with a <code>false</code> tag that it receives through <code>pq</code> <em>after</em> having taken its local snapshot.[1]</li>
+                    <li>To address complications arising from non-FIFO channels (e.g., an initiator not sending basic messages after its snapshot, or a process not knowing when to stop waiting for messages), a special control message is introduced. After taking its local snapshot, each process <code>p</code> sends this control message into all its outgoing channels. This message informs the receiving process <code>q</code> about the number of <code>false</code>-tagged basic messages <code>p</code> has sent to <code>q</code>. If <code>q</code> has not yet taken a snapshot and receives this control message, it takes one.[1]</li>
+                </ul>
+                <p>The consistency argument for Lai-Yang is similar in principle to Chandy-Lamport but adapted for non-FIFO. If a receive event <code>b</code> is presnapshot, the message sent by <code>a</code> must carry the <code>false</code> tag, which implies <code>a</code> is also presnapshot.[1] Basic messages are included in the channel state if their receive event at <code>q</code> is postsnapshot and they carry the <code>false</code> tag, indicating their send event at <code>p</code> was presnapshot. The algorithm also requires <code>E</code> control messages and completes within <code>O(D)</code> time units.[1]</p>
+                <p>The Lai-Yang algorithm demonstrates how to achieve consistency in a more general (non-FIFO) asynchronous environment, but at the cost of increased complexity. The absence of FIFO guarantees means that markers can be overtaken by basic messages. To compensate, Lai-Yang embeds snapshot-related information (pre/post-snapshot status) directly into basic messages via tagging. The explicit control message is then necessary to signal the completion of the "pre-snapshot" message stream for a given channel, a function that FIFO channels implicitly handle. This adds overhead and complexity to both the basic message format and the control logic. This exemplifies a classic trade-off in distributed systems design: achieving greater generality often requires more intricate mechanisms and potentially higher resource consumption.</p>
+
+                <h3>Table 2: Comparison of Chandy-Lamport vs. Lai-Yang Snapshot Algorithms</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Chandy-Lamport Algorithm</th>
+                            <th>Lai-Yang Algorithm</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Channel Requirement</strong></td>
+                            <td>FIFO (First-In, First-Out)</td>
+                            <td>Non-FIFO</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Control Message Type</strong></td>
+                            <td>Simple "marker" messages</td>
+                            <td>Tagged basic messages (<code>true</code>/<code>false</code>) + special control messages (for counts)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Channel State Logic</strong></td>
+                            <td>Basic messages received after local snapshot AND before marker from sender</td>
+                            <td>Basic messages with <code>false</code> tag received after local snapshot</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Consistency Reliance</strong></td>
+                            <td>FIFO property ensures marker ordering</td>
+                            <td>Message tagging and explicit count mechanisms</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Message Complexity</strong></td>
+                            <td>O(E) (E = number of channels)</td>
+                            <td>O(E)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Time Complexity</strong></td>
+                            <td>O(D) (D = network diameter)</td>
+                            <td>O(D)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Key Mechanism</strong></td>
+                            <td>Marker propagation and implicit ordering</td>
+                            <td>Message tagging and explicit count signaling</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="rollback-recovery" class="content-section">
+                <h2>Section 3.3: Rollback Recovery</h2>
+                <p>This section covers rollback recovery, a fault-tolerance technique that allows a distributed system to recover from process crash failures by relaunching from a previously saved consistent state (checkpoint). The Peterson-Kearns algorithm, which uses vector clocks for precise rollback, is detailed.</p>
+                <p>Rollback recovery is a fault-tolerance technique aimed at mitigating the impact of process crash failures in a distributed system. Instead of restarting an interrupted execution from its initial configuration, it allows the system to relaunch from a previously saved intermediate consistent state, known as a checkpoint. This capability is particularly vital for long-running applications where restarting from scratch would be prohibitively expensive.[1]</p>
+                <p>The effectiveness of rollback recovery relies on several assumptions: channels are presumed to function correctly (messages are not lost or corrupted), and it is assumed that when a process crashes, its execution will eventually be resumed, either by the same process recovering or by another process taking over its responsibilities. A crucial component is the "failure detector," which each process possesses to identify crashes. Such detectors can be implemented using timeout mechanisms if there's a known upper bound on network latency and processes send regular "heartbeat" messages.[1] Furthermore, processes are assumed to have "stable storage"—a portion of their local memory that remains consistent and accessible even after a crash. This can be achieved through techniques like redundant disk writes, ensuring data integrity.[1]</p>
+                <p>Unlike coordinated snapshot algorithms, checkpointing in rollback recovery is often "uncoordinated," meaning processes save their states independently. While this reduces message overhead during normal operation, it can lead to "orphan" or "lost" messages upon recovery, necessitating a rollback procedure to restore a globally consistent state.[1]</p>
+
+                <h3>Peterson-Kearns Checkpointing and Rollback Recovery Algorithm</h3>
+                <p>The Peterson-Kearns Checkpointing and Rollback Recovery Algorithm addresses these challenges by employing logical vector clocks to precisely determine which basic events need to be discarded during a rollback. The core idea is to identify and undo any event that is causally dependent on an "irrecoverably lost event" at a crashed process (an event that occurred after the crashed process's last saved checkpoint).[1]</p>
+                <p>The mechanism operates as follows:</p>
+                <ul>
+                    <li>Every basic message includes the vector time of its send event, enabling the receiver to determine the vector time of the corresponding receive event. Control events related to the rollback procedure itself are not factored into the vector clock calculations.[1]</li>
+                    <li>Each checkpoint stored in stable storage is paired with the process's vector time at the moment it was taken. Additionally, send and receive events of basic messages are logged with their respective vector times within each checkpoint.[1]</li>
+                    <li>When a crashed process <code>p_i</code> restarts (or its execution is taken over), it retrieves its last checkpoint from stable storage. It then initiates the rollback procedure across the network by flooding a control message containing its index <code>i</code> and the <code>i</code>-th component (<code>k_i</code>) of its vector time at the time of its last checkpoint.[1]</li>
+                    <li>While a process <code>p_j</code> is performing the rollback procedure, its basic computation is temporarily stalled. Upon receiving <code>p_i</code>'s control message, <code>p_j</code> checks if the <code>i</code>-th coordinate of its current vector time is greater than <code>k_i</code>. If it is, this indicates that <code>p_j</code>'s current state has been causally influenced by a basic event at <code>p_i</code> that was lost due to <code>p_i</code>'s crash. In this case, <code>p_j</code> rolls back to its last checkpoint where its <code>i</code>-th vector time component was not greater than <code>k_i</code>.[1]</li>
+                    <li>During this reconstruction, basic messages received by <code>p_j</code> <em>after</em> its rollback point are handled carefully: those whose send event's <code>i</code>-th vector time component is <em>not</em> greater than <code>k_i</code> are retained, as discarding them would needlessly turn them into lost messages. However, messages whose send event's <code>i</code>-th vector time component <em>is</em> greater than <code>k_i</code> are discarded to prevent them from becoming orphan messages.[1]</li>
+                    <li>To prevent basic messages sent to <code>p_i</code> between its last checkpoint and its crash from being lost, <code>p_i</code> informs other processes <code>q</code> about messages it received from <code>q</code> during that period. Process <code>q</code> then physically resends these potentially lost messages to <code>p_i</code>. Sequence numbers, incremented at each new recovery phase, are attached to basic messages, allowing <code>p_i</code> to recognize and discard duplicate or truly orphaned messages (those with an old sequence number and a sender's <code>i</code>-th vector time component greater than <code>k_i</code>).[1]</li>
+                </ul>
+                <p>The Peterson-Kearns algorithm's ability to precisely identify which events require rollback is a direct consequence of the strong causal properties provided by vector clocks. Lamport's clock, which provides only a total ordering, would be insufficient for this task. A total ordering does not distinguish between causally related and concurrent events; thus, if an event <code>a</code> at <code>p_i</code> were lost, Lamport's clock might incorrectly imply that a concurrent event <code>b</code> at <code>p_j</code> was causally dependent on <code>a</code>, leading to unnecessary rollbacks. Vector clocks, by contrast, accurately capture the causal cone of each event. If the <code>i</code>-th component of <code>VC(b)</code> at <code>p_j</code> is greater than <code>k_i</code>, it definitively indicates that <code>b</code> was influenced by an event at <code>p_i</code> that occurred after <code>p_i</code>'s last checkpoint. This precision prevents over-rollback, which is critical for minimizing recovery overhead. This application exemplifies the advanced capabilities of vector clocks in managing complex fault-tolerance scenarios where fine-grained causal reasoning is paramount.[1]</p>
+                <p>A notable limitation of the Peterson-Kearns algorithm is its inability to cope with multiple concurrent crashes. However, in scenarios where crashes are rare and recovery phases are brief, this limitation may be deemed acceptable.[1]</p>
+            </div>
+
+            <div id="waves" class="content-section">
+                <h2>Chapter 4: Waves</h2>
+                <p>This chapter introduces wave algorithms, a fundamental pattern for information dissemination and collection in distributed networks. These algorithms ensure that all participating processes contribute to a decision. We explore traversal algorithms like Tarry's and DFS, the Tree algorithm for acyclic networks, and the general Echo algorithm.</p>
+                <p>Wave algorithms represent a fundamental pattern for information gathering and distributed consensus within a network. A "wave" is defined as a finite computation characterized by one or more "decide events," where for every such decision, there exists a causally preceding event at every participating process. This design ensures that all processes contribute to the final decision. A critical property of wave algorithms is that they will not complete if any process refuses to participate, as this would violate the causal precedence requirement for the decide event.[1] In scenarios where multiple waves might be initiated concurrently (e.g., by different processes), messages are typically tagged with the initiator's ID to distinguish them. If one wave fails to complete due to a non-participating process, another wave might successfully conclude later.[1]</p>
+                <p>Wave algorithms formalize the intuitive idea of "flooding and converging" information, serving as a building block for numerous higher-level distributed tasks such as termination detection, leader election, and routing. This abstract pattern allows for commonalities in design and correctness proofs across diverse algorithms.</p>
+
+                <h3>Traversal Algorithms</h3>
+                <p>Traversal algorithms are a specific type of centralized wave algorithm where a single initiator dispatches a "token" that systematically visits all other processes in the network. Once the token has completed its tour and returned to the initiator, the initiator makes a decision. These algorithms are often used to construct a spanning tree of the network, with the initiator as the root. In such a tree, each non-initiator identifies its parent as the process from which it first received the token.[1]</p>
+                <ul>
+                    <li><strong>Tarry's Algorithm:</strong> Designed for undirected networks, Tarry's algorithm ensures that a token traverses every channel exactly twice (once in each direction) before returning to the initiator. It operates based on two simple rules: (1) A process never forwards the token through the same channel twice, and (2) a non-initiator only forwards the token back to its parent if no other options are available.[1] This systematic traversal guarantees that the token eventually returns to the initiator. The algorithm has a message complexity of <code>2E</code> (two messages per channel) and a time complexity of <code>O(2E)</code>.[1]</li>
+                    <li><strong>Depth-First Search (DFS):</strong> A specific variant of traversal, DFS prioritizes exploring new, unvisited paths. When a process holding the token has no unvisited neighbors, it sends the token back to its parent. This behavior is achieved by adding a third rule to Tarry's algorithm: (3) Upon receiving the token, a process immediately sends it back through the same channel if rules 1 and 2 permit.[1] Like Tarry's, basic DFS has a message complexity of <code>2E</code> and a time complexity of <code>O(2E)</code>. Efficiency can be improved by including IDs of visited processes in the token, which reduces message and time complexity to <code>O(2N-2)</code> but increases bit complexity.[1]
+                        <ul>
+                            <li><strong>Awerbuch's DFS Algorithm:</strong> This variant enhances the basic DFS by having a process inform its neighbors (excluding the sender and the next intended recipient) that it has been visited. It then waits for acknowledgments from these neighbors before forwarding the token. While this adds robustness, it increases the worst-case message complexity to <code>4E</code> and time complexity to <code>O(4N-2)</code>.[1]</li>
+                            <li><strong>Cidon's DFS Algorithm:</strong> Cidon's algorithm refines Awerbuch's by eliminating the need to wait for acknowledgments. A process forwards the token without delay and records where it sent it last. If it receives the token back from a different process (not the one it last forwarded to), it dismisses the token and marks that channel as a frond edge. This approach reduces the worst-case time complexity to <code>O(2N-2)</code> but retains a message complexity of up to <code>4E</code>.[1]</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p>The evolution from basic DFS to Awerbuch's and Cidon's algorithms illustrates a common design pattern in distributed algorithm optimization: balancing resource consumption. These optimizations often involve trade-offs, where improving one metric (e.g., time) might come at the expense of another (e.g., messages or bit complexity). Cidon's algorithm, for instance, prioritizes time efficiency by removing explicit synchronization points (waiting for acknowledgments), relying on implicit information flow. This can lead to more messages in certain scenarios (e.g., frond edges carrying two tokens) but achieves faster termination. Understanding these inherent trade-offs is crucial for selecting or designing algorithms suitable for specific performance constraints.</p>
+
+                <h3>Tree Algorithm</h3>
+                <p>The tree algorithm is a decentralized wave algorithm specifically designed for undirected, acyclic networks (i.e., tree topologies).[1] Its mechanism is based on local information aggregation: a process <code>p</code> waits until it has received messages from all but one of its neighbors. It then designates that remaining neighbor as its "parent" and sends a message to it. A process "decides" when it receives a message from its parent.[1] In every execution of this algorithm, exactly two processes will decide, and these two processes will consider each other their parent.[1] The algorithm takes at most <code>D/2</code> time units to terminate if the network diameter <code>D</code> is greater than 1.[1]</p>
+                <p>A critical limitation of the tree algorithm is its unsuitability for networks containing cycles. In such topologies, the algorithm may not terminate. For example, in a ring of three processes, each process has two neighbors and would indefinitely wait for a message from one of them, leading to a deadlock.[1] This strict reliance on acyclic networks underscores how network topology fundamentally constrains algorithm design. Solutions tailored for specific topologies, while potentially simpler or more efficient within those constraints, are brittle and fail when those topological assumptions are violated. The algorithm's termination proof explicitly relies on the acyclic property to prevent cycles of waiting processes.</p>
+
+                <h3>Echo Algorithm</h3>
+                <p>The echo algorithm is a centralized wave algorithm applicable to general undirected networks.[1] It functions as a parallelized version of Tarry's traversal algorithm. The initiator begins by sending messages to all its immediate neighbors. When a non-initiator receives a message for the first time, it designates the sender as its parent and then forwards messages to all its other neighbors. Once a non-initiator has received messages from all its neighbors (including its parent), it sends a message back to its parent. Finally, the initiator makes its decision once it has received messages from all its neighbors.[1] This process effectively constructs a spanning tree that covers the entire network, and all messages exchanged are causally antecedent to the initiator's final decision.[1] The echo algorithm requires <code>2E</code> messages and completes within <code>O(2N-2)</code> time units.[1]</p>
+                <p>The echo algorithm, unlike token-based traversal algorithms, employs a flooding strategy. This approach enhances its robustness across general network topologies, as it does not rely on a single token to traverse the network, which could get stuck or require complex backtracking. The pattern of messages expanding outwards and then converging inwards—much like an echo—is a highly effective method for disseminating information broadly and then aggregating responses to establish a global state in a distributed system, even without strong guarantees like FIFO channels. This makes the echo algorithm a versatile and foundational building block for many other distributed algorithms, including those for election and synchronization.</p>
+            </div>
+
+            <div id="deadlock-detection" class="content-section">
+                <h2>Chapter 5: Deadlock Detection</h2>
+                <p>This chapter focuses on deadlock detection, a critical issue where processes become permanently blocked waiting for each other. It introduces wait-for graphs for modeling dependencies and details the Bracha-Toueg deadlock detection algorithm, which uses snapshots to analyze these graphs.</p>
+                <p>Deadlock is a critical problem in distributed systems, occurring when a group of processes becomes perpetually blocked, each waiting for another process within the group to take an action (e.g., send a message or release a resource). This can manifest as a "communication deadlock" (processes waiting for messages) or a "resource deadlock" (processes waiting for resources).[1]</p>
+                <p>To model and analyze these dependencies, "wait-for graphs" are employed. These graphs depict relationships between processes and resources, where nodes can represent either. A common abstraction is the "N-out-of-M request," where a nonblocked node <code>u</code> sends requests to <code>M</code> other nodes and becomes blocked until <code>N</code> of these requests are granted. In the graph, a unidirectional edge is drawn from <code>u</code> to each of the <code>M</code> requested nodes. Once <code>N</code> requests are granted, <code>u</code> unblocks, and the remaining <code>M-N</code> outgoing edges are removed. Requests where <code>N=M</code> are termed "AND requests" and are depicted with an arc through the edges, while <code>N=1</code> requests are "OR requests" and are drawn without an arc.[1]</p>
+                <p>Wait-for graphs provide a powerful abstraction for modeling complex dependencies in distributed systems. By transforming the dynamic, temporal problem of processes waiting over time into a static, structural representation, these graphs enable the application of graph theory (e.g., cycle detection) to a seemingly amorphous problem like deadlock. This abstraction is crucial because distributed systems are inherently difficult to observe globally in real-time. The graph offers a consistent "snapshot" of dependencies, allowing for systematic analysis.</p>
+
+                <h3>Bracha-Toueg Deadlock Detection Algorithm</h3>
+                <p>This algorithm provides a distributed method for detecting deadlocks by analyzing a snapshot of the wait-for graph. The process begins with a process suspecting a deadlock initiating a snapshot of the wait-for graph, typically using the Lai-Yang algorithm (Section 3.2) for non-FIFO channels. Subsequent snapshots are distinguished by sequence numbers.[1]</p>
+                <p>Each node <code>u</code> in the network takes a local snapshot to identify two sets of nodes: <code>Out_u</code>, representing nodes to which <code>u</code> has sent requests that are still ungranted or undismissed, and <code>In_u</code>, representing nodes from which <code>u</code> has received requests that are still ungranted or undismissed.[1] The algorithm then distributively "cleans out" the wait-for graph by resolving grants:</p>
+                <ul>
+                    <li>Nonblocked nodes in the snapshot can grant requests.</li>
+                    <li>When a request is granted, the corresponding edge in the wait-for graph is removed.</li>
+                    <li>A node <code>u</code> with an outstanding N-out-of-M request becomes unblocked when it receives N grants, and its remaining M-N outgoing edges are removed.</li>
+                    <li>Any nodes that remain blocked after no more grants are possible are considered deadlocked in the basic algorithm's snapshot.[1]</li>
+                </ul>
+                <p>The distributed grant resolution proceeds as follows:</p>
+                <ul>
+                    <li>Initially, <code>requests_v</code> for each node <code>v</code> is the number of grants <code>v</code> requires to unblock. <code>notified_v</code> and <code>free_v</code> flags are initialized to <code>false</code> to ensure routines are executed at most once.[1]</li>
+                    <li>The initiator <code>u</code> of the deadlock detection starts by executing <code>Notify_u</code>, sending <code>notify</code> messages to all nodes in <code>Out_u</code>. If <code>requests_u</code> is 0 and <code>free_u</code> is <code>false</code>, <code>u</code> also performs <code>Grant_u</code>. It then awaits <code>done</code> messages from all nodes in <code>Out_u</code>.[1]</li>
+                    <li>Non-initiators <code>v</code> receiving a <code>notify</code> message for the first time execute <code>Notify_v</code>. Nodes <code>v</code> that are or become unblocked (<code>requests_v = 0</code>) execute <code>Grant_v</code>.[1]</li>
+                    <li>The <code>Notify_v</code> procedure sets <code>notified_v</code> to <code>true</code>, sends <code>notify</code> to <code>Out_v</code>, and if <code>requests_v = 0</code> and <code>free_v = false</code>, calls <code>Grant_v</code>. It then waits for <code>done</code> messages from <code>Out_v</code>.[1]</li>
+                    <li>The <code>Grant_v</code> procedure sets <code>free_v</code> to <code>true</code>, sends <code>grant</code> messages to <code>In_v</code>, and awaits <code>ack</code> messages from <code>In_v</code>.[1]</li>
+                    <li>When a node <code>v</code> receives a <code>notify</code> from <code>w</code>: if <code>notified_v</code> is <code>false</code>, it performs <code>Notify_v</code> and sends <code>done</code> to <code>w</code>.</li>
+                    <li>When <code>v</code> receives a <code>grant</code> from <code>w</code>: if <code>requests_v > 0</code>, it decrements <code>requests_v</code>. If <code>requests_v</code> becomes 0 and <code>free_v</code> is <code>false</code>, it performs <code>Grant_v</code>. It then sends <code>ack</code> to <code>w</code>.[1]</li>
+                    <li>The <code>done</code> and <code>ack</code> messages are critical for implicit termination detection of the algorithm itself. The initiator <code>u</code> determines if it is deadlocked by checking <code>free_u</code> after receiving <code>done</code> messages from all nodes in <code>Out_u</code>.[1]</li>
+                </ul>
+                <p>The Bracha-Toueg algorithm's reliance on a preceding snapshot, particularly the Lai-Yang algorithm, highlights a crucial dependency: complex global state problems like deadlock often require a consistent view of the system's state before they can be analyzed. The snapshot acts as a "freeze-frame" that allows the detection algorithm to operate on a static representation of dynamic dependencies. Deadlock is a stable property—once it occurs, it remains true unless external intervention happens. Without a consistent snapshot, a deadlock detection algorithm would struggle to analyze a constantly changing graph, potentially leading to false positives or negatives. The snapshot provides the necessary fixed point for accurate analysis.</p>
+                <p>The algorithm itself is designed to be deadlock-free, meaning the initiator will eventually complete its <code>Notify</code> call. This is ensured because cycles of nodes waiting for <code>ack</code> messages cannot form, guaranteeing that some node can always respond to a pending <code>notify</code> or <code>grant</code>.[1] The accuracy of deadlock detection is also a key property: if the initiator remains blocked after the algorithm cleans out the wait-for graph, it is indeed deadlocked in the basic algorithm's snapshot. For communication deadlocks, this relationship is bidirectional. For resource deadlocks, it holds only if resource requests are granted non-deterministically.[1]</p>
+
+                <h3>Table 3: Bracha-Toueg Deadlock Detection Algorithm - Key Mechanisms</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Phase</th>
+                            <th>Mechanism/Algorithm Used</th>
+                            <th>Purpose</th>
+                            <th>Key Variables/Messages</th>
+                            <th>Correctness Aspect</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Snapshot Acquisition</strong></td>
+                            <td>Lai-Yang Snapshot Algorithm</td>
+                            <td>Capture consistent wait-for graph</td>
+                            <td><code>Out_u</code>, <code>In_u</code> (local requests)</td>
+                            <td>Consistency of snapshot</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distributed Grant Resolution</strong></td>
+                            <td><code>Notify_v</code> and <code>Grant_v</code> procedures</td>
+                            <td>Distributively resolve dependencies in the graph</td>
+                            <td><code>requests_v</code>, <code>notify</code>, <code>grant</code>, <code>notified_v</code>, <code>free_v</code></td>
+                            <td>Deadlock-freeness of detection algorithm</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Termination Check</strong></td>
+                            <td><code>Done</code>/<code>ACK</code> messages</td>
+                            <td>Determine global termination of the detection process</td>
+                            <td>Initiator checks <code>free_u</code> after all <code>done</code> received</td>
+                            <td>Accurate detection of basic algorithm deadlock</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="termination-detection" class="content-section">
+                <h2>Sections 6.1-6.4: Termination Detection</h2>
+                <p>Termination detection algorithms determine when a distributed computation has globally finished. This section covers several such algorithms, including Dijkstra-Scholten, Shavit-Francez, Rana's, Safra's, and the Weight-Throwing algorithm, each with different approaches and assumptions for various network types and basic algorithm centralizations.</p>
+                <p>Termination detection is the process of determining when a distributed computation has concluded, meaning all processes are passive and no basic messages are in transit.[1] This is a fundamental and challenging problem because no single process has complete knowledge of the global system configuration. A passive process can be reactivated by a delayed message from another process, and establishing the complete absence of messages across the network is inherently difficult.[1]</p>
+                <p>The core difficulty in termination detection lies in the problem of "distributed observation" in asynchronous systems. Local termination (a process becoming passive) does not imply global termination due to messages that might still be in transit. This highlights the challenge of obtaining a consistent global view without a central coordinator or a global clock. The control algorithm must account for the entire system state, including the dynamic state of communication channels, which are not directly observable by any single process.</p>
+                <p>For the purpose of termination detection algorithms, processes in the basic algorithm are abstracted into two states: "active" (can perform internal or send events) and "passive" (can only perform a receive event, which will make it active again).[1] Correctness of a termination detection algorithm is typically defined by two criteria: (1) if the basic algorithm has terminated, this must eventually be detected, and (2) when termination is detected, the basic algorithm must have indeed terminated at some point in the past.[1]</p>
+                <p>Several techniques have been developed to address this problem:</p>
+
+                <h3>Dijkstra-Scholten Algorithm</h3>
+                <p>This algorithm is designed for centralized basic algorithms on undirected networks.[1] Its core idea is to construct and maintain a tree, rooted in the initiator of the basic algorithm, that encompasses all active processes and any passive processes that have active descendants. When a basic message from process <code>p</code> causes process <code>q</code> to become active, <code>q</code> joins this tree with <code>p</code> as its parent. Processes can only leave the tree if they are passive and have no children. Upon leaving, a non-initiator informs its parent, and the initiator detects global termination when the entire tree has disappeared.[1]</p>
+                <p>To implement this, each process <code>p</code> maintains a "child counter" (<code>cc_p</code>), which estimates from above both its number of children in the tree and the number of basic messages <code>p</code> has sent that are still in transit. When <code>p</code> sends a basic message, <code>cc_p</code> increases. When a basic message arrives at <code>q</code>, <code>q</code> either joins the tree (making the sender its parent) or, if already in the tree, sends an acknowledgment back to the sender, causing the sender's <code>cc_p</code> to decrease. A process <code>p</code> quits the tree when it is passive and <code>cc_p</code> is zero. If <code>p</code> is a non-initiator, it sends an acknowledgment to its parent; if <code>p</code> is the initiator, it calls <code>Announce</code>.[1] The algorithm guarantees that active processes and messages in transit are always accounted for within the tree structure, ensuring that <code>Announce</code> is only called when the basic algorithm has truly terminated.[1]</p>
+                <p>Dijkstra-Scholten exemplifies a common pattern in distributed control: using a tree structure (implicitly or explicitly constructed) to manage control flow and aggregate information. The tree provides a natural hierarchy for processes to report their state and for the initiator to collect global information. The <code>cc_p</code> counter effectively tracks "activity" (local activity plus activity of descendants and messages sent), and when this activity converges to zero at the root, it implies global quiescence. This is a very efficient way to aggregate distributed state information.</p>
+
+                <h3>Shavit-Francez Algorithm</h3>
+                <p>This algorithm generalizes Dijkstra-Scholten to decentralized basic algorithms.[1] Instead of a single tree, it maintains a "forest" of disjoint trees, one for each initiator. A process can only join a tree if it is not already part of another tree in the forest. The rest of the algorithm proceeds similarly to Dijkstra-Scholten. The key difference lies in the announcement phase: when an initiator detects that its specific tree has disappeared, it cannot immediately call <code>Announce</code>. Instead, it initiates a "wave" (tagged with its ID) in which <em>only</em> processes not currently belonging to any tree participate. If this wave successfully completes, the initiator can then call <code>Announce</code>. The algorithm guarantees that the last tree to disappear will initiate a wave that is certain to complete, ensuring global termination is eventually detected.[1]</p>
+                <p>The Shavit-Francez algorithm directly addresses the increased complexity introduced by decentralization in termination detection. With multiple initiators, a single global tree is insufficient to aggregate all activity. The "forest" manages local spheres of influence. To determine global termination when all local spheres appear quiescent, a meta-level wave is used. This wave acts as a global check among the "inactive" (tree-less) processes. The guarantee that "a last tree to disappear is guaranteed to start a wave that will complete" is crucial for the algorithm's liveness, ensuring that the system does not enter a state of undetected global quiescence.</p>
+
+                <h3>Rana's Algorithm</h3>
+                <p>Rana's algorithm detects termination for decentralized basic algorithms on undirected networks, assuming that every basic message is acknowledged.[1] This acknowledgment mechanism allows processes to track whether all messages they sent have reached their destination. A process becomes "quiet" if it is passive AND all basic messages it sent have been acknowledged. A quiet process then initiates a "wave," tagged with its ID and a logical timestamp <code>t</code>. When a process <code>p</code> receives such a wave message, its logical timestamp is updated to the maximum of its current timestamp and <code>t</code>. Similarly, acknowledgments for basic messages also carry the sender's timestamp, which updates the receiver's timestamp to <code>max(current, sender_timestamp+1)</code>. Crucially, only quiet processes that have been quiet from a logical time <code>≤ t</code> onward are allowed to participate in this wave. If a wave successfully completes, its initiator calls <code>Announce</code>.[1]</p>
+                <p>Rana's algorithm specifically addresses a potential flaw in simpler timestamp-less approaches: an active process could reactivate a quiet process that had already participated in a termination wave, leading to premature termination detection. By incorporating logical timestamps, this scenario is prevented. When a process <code>p</code> is visited by a wave <code>W_t</code>, its logical clock value becomes at least <code>t</code>. If <code>p</code> is later reactivated by a basic message from <code>q</code>, and <code>p</code> sends an acknowledgment to <code>q</code>, <code>q</code>'s logical clock value will be updated to a value greater than <code>t</code>. Consequently, <code>q</code> will be prevented from participating in the original wave <code>W_t</code> because its timestamp no longer meets the <code>≤ t</code> criterion for participation. This timestamp mechanism effectively creates a "causal barrier," ensuring that processes influenced by recent activity do not participate in "old" termination waves, thereby maintaining the algorithm's correctness and liveness.[1]</p>
+
+                <h3>Safra's Algorithm</h3>
+                <p>Safra's algorithm is a traversal-based termination detection algorithm, typically used with centralized control algorithms on directed networks.[1] The initiator of the control algorithm dispatches a "token" that traverses every process in the network. A process is permitted to forward the token only when it is passive. When the token eventually returns to the initiator, a decision regarding termination is made based on the information accumulated within the token. If termination is not detected, the token is sent out for another round.[1]</p>
+                <p>This algorithm addresses two main complications: detecting basic messages in transit in a directed network (where simple acknowledgments may not be feasible) and preventing premature termination detection if an active process reactivates a passive, already-visited process. To handle these, every process maintains an integer counter that increments with outgoing basic messages and decrements with incoming ones. The token carries the sum of these counters from all processes it has traversed. Additionally, processes are assigned colors: initially all are "white," but a process turns "black" upon receiving a basic message. When the initiator, being passive, sends a white token with a sum of zero, a process receiving the token waits until it is passive, then adds its counter value to the token's sum. A white process leaves the token's color unchanged, while a black process colors the token black and then itself becomes white. The token is then forwarded. The initiator calls <code>Announce</code> if the token returns white and with a sum of zero; otherwise, it sends out a new white token.[1]</p>
+                <p>The algorithm ensures that if the basic algorithm has terminated, the token will eventually return to the initiator as white and with a sum of zero. Conversely, if the token returns in this state, it implies that no basic messages are in transit and no process can be reactivated by a delayed message, thereby confirming termination.[1] Safra's algorithm utilizes the token not merely for traversal but as a mobile accumulator of global state information (the sum of counters and its color). This approach is common in distributed algorithms where a single entity is responsible for collecting and processing system-wide information to make a global decision. The coloring mechanism is an ingenious way to manage the "reactivation problem" in directed graphs without explicit acknowledgments. If the token returns white, it signifies that no process turned black during its traversal, implying no new basic messages were received during that specific token round, thus providing a consistent view of message quiescence.</p>
+
+                <h3>Weight-Throwing Algorithm</h3>
+                <p>Weight-throwing is a termination detection technique for centralized basic algorithms operating on directed networks.[1] The initiator is endowed with a fixed total amount of "weight." Throughout the computation, this weight is distributed among active processes and basic messages in transit, with the crucial property that the total amount of weight in the entire network remains constant. When a basic message is sent, the sender transfers a portion (but not all) of its weight to the message. Upon receiving a basic message, the receiver adds the message's weight to its own. When a non-initiator process becomes passive, it returns its accumulated weight to the initiator via control messages, typically through a sink tree rooted at the initiator. The initiator calls <code>Announce</code> when it is passive and has successfully regained its original total weight.[1]</p>
+                <p>This algorithm guarantees that termination is detected only when all processes are passive and no basic messages are in transit, as any active component (process or message) will hold a portion of the total weight.[1] The "Achilles' heel" of this simple scheme is "underflow": the weight at a process might become too small to be further divided, preventing new basic messages from being sent. Three main solutions have been proposed for underflow: (1) a process experiencing underflow attributes extra weight to itself, informs the initiator, and waits for an acknowledgment before continuing to send basic messages; (2) the process initiates a nested weight-throwing subcall, returning its weight to the initiator only after this subcall terminates; or (3) processes maintain their weight using a <code>credit_p</code> counter, where weight is implicitly <code>2^-credit_p</code>. Sending a basic message then increases <code>credit_p</code> by 1, effectively halving the sender's weight and donating the other half to the message.[1]</p>
+                <p>The weight-throwing paradigm represents a distinct approach to global state detection: resource accounting. By assigning a conserved "resource" (weight) to active components, termination is detected when all resources return to a central point. This is a powerful and intuitive method. The underflow problem is a practical challenge arising from the discrete nature of digital computation attempting to model a continuous division of resources.</p>
+
+                <h4>Fault-Tolerant Weight Throwing (Section 6.5)</h4>
+                <p>This variant adapts the weight-throwing algorithm to cope with process crash failures. It assumes a complete network topology (ensuring strong connectedness is preserved after crashes) and the availability of a complete and strongly accurate failure detector.[1] Crashes introduce three main problems:</p>
+                <ol>
+                    <li><strong>Lost Weight:</strong> A crashed process or a message traveling to it might hold weight that cannot be recovered by the initiator. To address this, the initiator initiates a snapshot (e.g., using Lai-Yang) to account for the weight still present at live processes and messages in transit. If a new crash is detected during the snapshot, a new snapshot is initiated.[1]</li>
+                    <li><strong>Stale Crash Information:</strong> The initiator might detect a crash before a live non-initiator does. To prevent lost weight from messages sent by a live process to a process the initiator knows has crashed, the initiator informs all live non-initiators about crashed processes during the snapshot.[1]</li>
+                    <li><strong>Leader Crash:</strong> If the initiator of the basic algorithm (responsible for announcing termination) crashes, a new leader must be designated. Processes are enumerated (<code>p0,..., pN-1</code>), and <code>p_i+1</code> becomes the new leader if all <code>p_j</code> with <code>j ≤ i</code> have crashed. The new leader then initiates a snapshot to get an accurate view of the network's weight.[1]</li>
+                </ol>
+                <p>The fault-tolerant variant demonstrates how a simple concept like weight conservation becomes complex when real-world failures are introduced. It requires integration with other distributed algorithms, such as snapshots and failure detectors, and mechanisms for dynamic leadership election. This highlights the composability of distributed algorithms to achieve robust solutions.</p>
+
+                <h3>Table 4: Overview of Termination Detection Algorithms</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Centralized/Decentralized Basic Alg.</th>
+                            <th>Network Type</th>
+                            <th>Key Mechanism</th>
+                            <th>Assumptions/Requirements</th>
+                            <th>Handling Reactivation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Dijkstra-Scholten</strong></td>
+                            <td>Centralized</td>
+                            <td>Undirected</td>
+                            <td>Tree-based (child counters)</td>
+                            <td>FIFO (implicit for tree structure)</td>
+                            <td>Child counters track active descendants</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Shavit-Francez</strong></td>
+                            <td>Decentralized</td>
+                            <td>Undirected</td>
+                            <td>Forest-based + meta-wave</td>
+                            <td>FIFO (implicit)</td>
+                            <td>Meta-wave checks global quiescence</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Rana's</strong></td>
+                            <td>Decentralized</td>
+                            <td>Undirected</td>
+                            <td>Logical timestamps + quiet processes</td>
+                            <td>Basic message ACKs</td>
+                            <td>Logical timestamps act as causal filter</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Safra's</strong></td>
+                            <td>Centralized</td>
+                            <td>Directed</td>
+                            <td>Token traversal + counters + coloring</td>
+                            <td>Token traversal</td>
+                            <td>Coloring of processes</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Weight-Throwing</strong></td>
+                            <td>Centralized</td>
+                            <td>Directed</td>
+                            <td>Weight conservation (resource accounting)</td>
+                            <td>Weight conservation</td>
+                            <td>Active processes/messages carry weight</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="garbage-collection" class="content-section">
+                <h2>Chapter 7: Garbage Collection</h2>
+                <p>Garbage collection (GC) automates memory management by reclaiming unused objects. This chapter covers reference counting (including indirect and weighted methods), the challenge of cyclic garbage, the equivalence of GC and termination detection, tracing (mark-scan), and generational GC.</p>
+                <p>Garbage collection (GC) is the automated process of identifying and reclaiming memory objects that are no longer accessible or "live" within a system. Its primary purpose is to free up memory space that would otherwise be consumed by unused objects, preventing memory leaks and ensuring efficient resource utilization.[1]</p>
+                <p>An "object" refers to the content of a specific memory range on a process. Objects can contain "references" or "pointers" to other objects, potentially residing in the memory of other processes. A "root object" is an object explicitly referenced in the main function of a process, serving as an entry point for accessibility. An object is classified as "garbage" if it cannot be reached by navigating through references starting from any root object.[1]</p>
+                <p>A particular challenge in garbage collection is "cyclic garbage," which refers to a cycle of references between objects that are collectively inaccessible from any root, yet each object within the cycle maintains a reference count greater than zero. Simple reference counting schemes cannot detect such cycles.[1] To address this, techniques like "trial deletion" can be employed: a suspected object is "virtually deleted," and the effects of this trial deletion are propagated through its outgoing links by decrementing "trial reference counts." If the trial count of the suspected object eventually drops to zero, it confirms the object is indeed garbage and can be physically reclaimed.[1]</p>
+
+                <h3>Reference Counting</h3>
+                <p>This technique is based on tracking the number of references pointing to a non-root object in memory. If this count drops to zero, and there are no local pointers to the object, it is marked as garbage.[1]</p>
+                <ul>
+                    <li><strong>Advantages:</strong> Reference counting can be performed locally and is relatively easy to implement at runtime.[1]</li>
+                    <li><strong>Disadvantages:</strong> Its primary drawback is the inability to detect cyclic garbage.[1]</li>
+                    <li><strong>Distributed Challenge:</strong> In a distributed setting, a significant challenge is accurately tracking remote references, especially when references are duplicated or passed in messages. Premature reclamation can occur if an object is reclaimed while a message carrying a duplicated reference to it is still in transit.[1]</li>
+                </ul>
+                <p>To overcome the synchronization delays associated with informing the object owner for every reference duplication, two advanced reference counting methods are used:</p>
+                <ul>
+                    <li><strong>Indirect Reference Counting:</strong> This method maintains a logical tree for each non-root object, with the object itself at the root and its references as other nodes. Each reference keeps track of its "parent" (the source from which it was duplicated or created). Both the object and its references maintain counters that estimate the number of their children in this tree. When a process receives a reference to an object it already holds or owns, it immediately sends a "decrement" message back to the sender. When a duplicated or created reference is deleted and its counter becomes zero, a "decrement" message is sent to its parent (the process from which it was duplicated) or the object owner. An object is reclaimed when its own counter becomes zero and there are no local pointers to it.[1]</li>
+                    <li><strong>Weighted Reference Counting:</strong> In this approach, each non-root object is assigned a total "weight." References to the object are then given a portion of this weight. The object itself maintains a "partial weight" representing the portion of its total weight that has not yet been distributed to references. When a reference is created, the object owner divides the object's partial weight between the object and the new reference, deducting the assigned weight from the object's partial weight. Similarly, when a reference is duplicated, its weight is divided between itself and the copy. When a reference is deleted, the object owner is notified, and the weight of the deleted reference is subtracted from the object's total weight. The object can be reclaimed when its total weight becomes equal to its partial weight, and there are no local pointers to it.[1]
+                        <ul>
+                            <li><strong>Underflow:</strong> A practical challenge in weighted reference counting is "underflow," where a reference's weight becomes too small to be further divided, preventing further duplication. Solutions for this are similar to those in weight-throwing termination detection: a process can increase its weight and inform the object owner (requiring an acknowledgment), artificial indirect objects can be created, or weights can be represented as powers of two (e.g., <code>2^-k</code>) using a <code>credit</code> counter.[1]</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p>Both indirect and weighted reference counting adapt the "resource accounting" principle, also observed in weight-throwing termination detection, to the domain of memory management. Instead of tracking "activity," they track "reachability" through references. The underflow problem in weighted reference counting is a direct parallel to the same issue in weight-throwing, reinforcing the idea that similar challenges arise across different distributed problems when using analogous underlying mechanisms. This highlights a common pattern in distributed systems where a finite resource (be it "activity" or "reference rights") is distributed and then reclaimed.</p>
+
+                <h3>Garbage Collection Implies Termination Detection (Section 7.2)</h3>
+                <p>A profound theoretical connection exists between garbage collection and termination detection: GC algorithms can be transformed into TD algorithms. This equivalence implies that solutions developed for one problem can often be adapted for the other, revealing a deeper mathematical structure within distributed computation. The transformation works by introducing an artificial "root object" <code>O_p</code> for each process <code>p</code>, and a special non-root object <code>Z</code>. Initially, only initiators <code>p</code> hold a reference from <code>O_p</code> to <code>Z</code>. Every basic message exchanged in the system is made to carry a duplication of the <code>Z</code>-reference. When a process becomes passive, it deletes its <code>Z</code>-reference; when it becomes active, it is instructed to duplicate a <code>Z</code>-reference. Under this scheme, the basic algorithm is terminated if and only if the object <code>Z</code> is garbage.[1] This transformation demonstrates a deep structural equivalence: the quiescence of the basic algorithm (no active processes, no messages) directly corresponds to the inaccessibility (garbage status) of the <code>Z</code> object. For instance, indirect reference counting can be transformed into the Dijkstra-Scholten termination detection algorithm, and weighted reference counting can be transformed into a variation of the weight-throwing termination detection algorithm.[1]</p>
+
+                <h3>Tracing (Mark-Scan or Mark-and-Sweep)</h3>
+                <p>Tracing garbage collection involves two distinct phases [1]:</p>
+                <ol>
+                    <li><strong>Mark Phase:</strong> A traversal begins from all root objects, identifying and marking all objects that are reachable (accessible) in memory.</li>
+                    <li><strong>Scan/Sweep Phase:</strong> All unmarked objects (those not reachable from any root) are then reclaimed as garbage.</li>
+                </ol>
+                <ul>
+                    <li><strong>Advantages:</strong> Tracing is capable of detecting all forms of garbage, including cyclic garbage, which is a significant advantage over simple reference counting.[1]</li>
+                    <li><strong>Drawbacks:</strong> It typically requires taking a consistent snapshot of channel states to account for references in transit and often necessitates "freezing" the basic execution to perform a global scan of all reachable memory objects.[1]</li>
+                </ul>
+                <p>Two standard ways to perform the second phase (reclamation) are:</p>
+                <ul>
+                    <li><strong>Mark-copy:</strong> Marked objects are copied to a contiguous block of empty memory space. This method is generally faster than compaction but can lead to memory fragmentation over time.[1]</li>
+                    <li><strong>Mark-compact:</strong> Marked objects are compacted within their current memory space. This is slower than copying but effectively resolves memory fragmentation.[1]</li>
+                </ul>
+
+                <h3>Generational Garbage Collection</h3>
+                <p>This is a practical optimization of tracing, based on the empirical observation that most newly created objects either become garbage very quickly or remain accessible for a very long time.[1]</p>
+                <ul>
+                    <li><strong>Mechanism:</strong> Objects are divided into two "generations": a "young generation" and an "old generation." Garbage in the young generation is collected frequently using the faster mark-copy approach, while garbage in the old generation is collected sporadically using the more thorough mark-compact method. Newly created objects are initially placed in the young generation and are promoted to the old generation if they remain accessible for a certain duration or number of garbage collection cycles.[1]</li>
+                </ul>
+                <p>Generational garbage collection is a prime example of how theoretical algorithms are optimized for practical performance by exploiting empirical observations about system behavior. This approach moves beyond pure algorithmic correctness to focus on efficiency in real-world systems, a key aspect of engineering distributed systems. By recognizing that most garbage is "young," frequent, lightweight scans of a smaller "young" memory space prove more efficient than infrequent, heavy scans of the entire memory. This heuristic optimization, while not changing the fundamental correctness, significantly improves overall performance.</p>
+
+                <h3>Table 5: Comparison of Garbage Collection Techniques</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Technique</th>
+                            <th>Core Idea</th>
+                            <th>Cyclic Garbage Detection</th>
+                            <th>Runtime Operation</th>
+                            <th>Distributed Challenges</th>
+                            <th>Key Problems/Drawbacks</th>
+                            <th>Advantages</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Reference Counting</strong></td>
+                            <td>Count references to an object</td>
+                            <td>No (requires add-on)</td>
+                            <td>Yes (local)</td>
+                            <td>Tracking remote references</td>
+                            <td>Cyclic garbage, potential premature reclamation, underflow (weighted)</td>
+                            <td>Local, simple</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tracing (Mark-Scan)</strong></td>
+                            <td>Mark reachable objects, sweep unreachable</td>
+                            <td>Yes</td>
+                            <td>No (often freezes)</td>
+                            <td>Global snapshot/freezing execution</td>
+                            <td>Freezing/snapshot overhead</td>
+                            <td>Detects all garbage</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Generational GC</strong></td>
+                            <td>Combine strategies based on object age</td>
+                            <td>Yes</td>
+                            <td>Yes (incremental)</td>
+                            <td>Complexity of managing generations</td>
+                            <td>Increased complexity</td>
+                            <td>Performance optimization (exploits object lifetimes)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="routing" class="content-section">
+                <h2>Sections 8.1-8.3, 8.6: Routing</h2>
+                <p>Routing algorithms guide messages through a network to their destinations. This section covers centralized algorithms like Chandy-Misra and Merlin-Segall, the decentralized Toueg's algorithm, and practical Internet routing approaches (Distance-Vector, Link-State, BGP, TCP congestion control).</p>
+                <p>Routing is the process by which messages find their way through a network from a source process to a destination process that is not a direct neighbor. The objective is typically to route messages via "shortest paths," meaning paths that minimize the sum of weights (e.g., cost, latency) assigned to the traversed channels.[1] Each process <code>q</code> in the network maintains a "routing table," which stores for each possible destination <code>p</code> (other than <code>q</code> itself) the calculated shortest distance from <code>q</code> to <code>p</code>, along with the identity of the next neighbor <code>r</code> to which messages destined for <code>p</code> should be forwarded.[1]</p>
+                <p>Routing presents a fundamental problem of local decisions based on global knowledge. While each process makes a local decision about the next hop, this decision must be based on information that ensures global optimality (i.e., leading to the shortest path to the destination). The challenge lies in acquiring and maintaining this global knowledge distributively and efficiently in a potentially dynamic network. This tension between localized decision-making and the need for global optimality is a core theme in distributed algorithm design.</p>
+
+                <h3>Chandy-Misra Algorithm</h3>
+                <p>The Chandy-Misra algorithm is a centralized routing algorithm, also known as a single-source shortest-path algorithm, designed for undirected, weighted networks.[1] It computes a "sink tree" consisting of the shortest paths leading to a designated initiator. Each process <code>p</code> maintains <code>dist_p</code>, the length of the shortest known path from <code>p</code> to the initiator, and <code>parent_p</code>, the process after <code>p</code> on this path. Initially, the initiator's <code>dist</code> is 0, while all other processes have <code>dist_p</code> set to infinity and <code>parent_p</code> undefined. The algorithm begins with the initiator sending <code>(dist, 0)</code> messages to its neighbors. When a process <code>p</code> receives a <code>(dist, d)</code> message from a neighbor <code>q</code>, it checks if <code>d + weight(pq)</code> is less than its current <code>dist_p</code>. If a shorter path is found, <code>p</code> updates <code>dist_p</code> and <code>parent_p</code> to <code>q</code>, and propagates this improved estimate to all its neighbors except <code>q</code>. Otherwise, the message is dismissed.[1] The algorithm guarantees that <code>dist_p</code> will eventually converge to the actual shortest path weight, and <code>parent_p</code> will point to the correct next hop.[1]</p>
+                <p>The Chandy-Misra algorithm, while conceptually simple (akin to Bellman-Ford relaxation), suffers from a worst-case exponential message complexity for general weighted networks. This occurs because the algorithm might discover paths in decreasing order of weight, leading to numerous updates and message exchanges. This highlights that a direct distributed adaptation of a sequential algorithm does not always yield efficient distributed performance, motivating more structured approaches.[1]</p>
+
+                <h3>Merlin-Segall Algorithm</h3>
+                <p>The Merlin-Segall algorithm is another centralized algorithm for computing all shortest paths to an initiator, but it introduces a round-based structure to the Chandy-Misra approach. It assumes the initiator knows an upper bound on the network size <code>N</code>.[1] The core idea is to proceed in explicit rounds, similar to the echo algorithm, where distance messages flow up and down a sink tree, and distance values are updated. The sink tree itself is restructured at the end of each round.[1]</p>
+                <p>Initially, after round 0, the initiator's <code>dist</code> is 0, other processes have <code>dist_p</code> as infinity, and <code>parent_p</code> values form an initial sink tree rooted at the initiator. Each round <code>n > 0</code> begins with the initiator sending <code>(dist, 0)</code> to its neighbors. When a non-initiator <code>p</code> receives <code>(dist, d)</code> from neighbor <code>q</code>, if <code>d + weight(pq) < dist_p</code>, it updates <code>dist_p</code> and stores <code>q</code> as a potential <code>new-parent</code>. If <code>q</code> is <code>p</code>'s current <code>parent_p</code>, <code>p</code> sends <code>(dist, dist_p)</code> to its other neighbors. After receiving messages from all neighbors in the current round, <code>p</code> sends <code>(dist, dist_p)</code> to its <code>parent_p</code> and updates <code>parent_p</code> to the <code>new-parent</code> if <code>dist_p</code> was improved. The initiator starts a new round after receiving messages from all its neighbors.[1] The algorithm guarantees that after round <code>n</code>, for any process <code>p</code> with a shortest path of less than <code>n</code> channels to the initiator, <code>dist_p</code> and <code>parent_p</code> will have reached their final values. Since shortest paths are at most <code>N-1</code> channels long, the algorithm terminates after <code>N-1</code> rounds.[1] The message complexity is <code>Θ(N^2 * E)</code>.[1] The Merlin-Segall algorithm can also be adapted to be robust against topology changes, such as failed edges or new channels, by sending special control messages.[1]</p>
+                <p>The Merlin-Segall algorithm introduces explicit rounds to manage distance updates, transforming the potentially chaotic asynchronous updates of Chandy-Misra into a more predictable, synchronized process. The rounds provide a form of logical synchronization. By knowing the network size <code>N</code>, the algorithm can determine the exact number of rounds needed to guarantee convergence (since shortest paths are at most <code>N-1</code> hops). This explicit phasing helps prevent the "thrashing" that can occur in fully asynchronous relaxation algorithms, where updates might continuously ripple through the network without clear global progress. This is a common technique to bound complexity and ensure convergence in distributed algorithms.</p>
+
+                <h3>Toueg's Algorithm</h3>
+                <p>Toueg's algorithm is a decentralized, all-pairs shortest-path algorithm for undirected networks, effectively a distributed version of the well-known Floyd-Warshall algorithm.[1] It aims to compute the shortest path between any pair of processes. A strong assumption for this algorithm is that all processes know the IDs of all other processes in the network from the outset, enabling them to uniformly select "pivots" in the same order across all nodes.[1]</p>
+                <p>Each process <code>p</code> maintains <code>dist_p(q)</code> (the length of the shortest known path from <code>p</code> to <code>q</code>) and <code>parent_p(q)</code> (the next process on that path) for every other process <code>q</code>. Initially, <code>dist_p(p)</code> is 0, and for <code>q ≠ p</code>, <code>dist_p(q)</code> is the <code>weight(pq)</code> if a channel exists, or infinity otherwise. In successive rounds, all processes uniformly select a pivot <code>r</code>. The pivot <code>r</code> then broadcasts its <code>dist_r(q)</code> values (its entire routing table) to all processes, typically via its sink tree. Processes <code>p</code> that are not in <code>r</code>'s sink tree immediately complete the round. Processes <code>p</code> that are in <code>r</code>'s sink tree (or <code>p=r</code>) wait to receive <code>dist_r</code> from their parent towards <code>r</code>. They then forward <code>dist_r</code> to neighbors who requested it and update their <code>dist_p(q)</code> and <code>parent_p(q)</code> values if a shorter path via <code>r</code> is discovered (i.e., if <code>dist_p(r) + dist_r(q) < dist_p(q)</code>).[1] The worst-case message complexity of Toueg's algorithm is <code>O(N^2)</code>, as there are <code>N</code> pivot rounds, and each round involves <code>O(N)</code> messages to forward distance values through the sink tree.[1]</p>
+                <p>Toueg's algorithm achieves the powerful goal of computing all-pairs shortest paths in a decentralized manner, but it relies on a very strong assumption: all processes must know all other process IDs and be able to agree on a global pivot order. This highlights a common trade-off in distributed algorithm design: more general or powerful algorithms often necessitate stronger assumptions about the system's knowledge or more global coordination. The Floyd-Warshall algorithm is inherently a centralized algorithm that iterates through all possible intermediate nodes. Distributing this requires all nodes to perform the <em>same</em> iteration (pivot selection) simultaneously. The assumption of global ID knowledge and uniform pivot selection simplifies this coordination challenge, but it limits the algorithm's applicability in truly dynamic or anonymous settings.</p>
+
+                <h3>Routing on the Internet (Section 8.6)</h3>
+                <p>Real-world Internet routing employs pragmatic approaches designed to handle its immense scale and dynamic nature, often combining multiple theoretical algorithms in a layered fashion.</p>
+                <ul>
+                    <li><strong>Distance-Vector Routing:</strong> In this approach, processes periodically send updates of their routing tables to their neighbors whenever local topology or routing tables change. This allows processes to locally maintain up-to-date routing tables and compute shortest paths, typically using the Bellman-Ford algorithm.[1]</li>
+                    <li><strong>Link-State Routing:</strong> Processes periodically, or upon a local topology change, send "link-state packets" to their neighbors. These packets report the channels connected to the process and their associated weights (e.g., latency, bandwidth). These packets are flooded throughout the network, and each includes a sequence number to prevent old information from overwriting new. All processes store the content of these packets to build a local view of the entire network, which they then use to compute shortest paths, typically with Dijkstra's algorithm. Link-state packets also carry a "time-to-live" field to discard stale information and reduce flooding overhead.[1]</li>
+                </ul>
+                <p>Neither pure distance-vector nor link-state routing scales efficiently to the entire Internet due to the overhead of sending full routing tables or extensive flooding. Therefore, the Internet is hierarchically organized into "Autonomous Systems (AS)," which are essentially distinct subnetworks. Within an AS (intra-AS routing), protocols like RIP (a distance-vector protocol) or OSPF (a link-state protocol) are used. Routing <em>between</em> autonomous systems (inter-AS routing) is handled by the Border Gateway Protocol (BGP), where "border routers" exchange reachability information, maintaining routing tables based on AS connectivity.[1]</p>
+                <p>The Transmission Control Protocol (TCP) plays a crucial role in ensuring reliable data delivery over the Internet and managing network congestion. To control congestion, every process maintains a "congestion window" for each of its bidirectional channels. This window sets an upper bound on the number of unacknowledged packets a process is permitted to have sent into a channel. The congestion window grows linearly with each received acknowledgment (up to a certain threshold) and can effectively double in size during each round-trip time if all packets are acknowledged. Conversely, if a data packet is lost, the congestion window is reset to its initial size (in TCP Tahoe) or halved (in TCP Reno).[1]</p>
+                <p>Internet routing exemplifies that real-world distributed systems often combine multiple theoretical algorithms and pragmatic heuristics in a layered fashion to achieve scalability and robustness. The "impossibility" or "inefficiency" of a single algorithm for the entire problem leads to hierarchical solutions (like Autonomous Systems and BGP) and adaptive mechanisms (like TCP congestion windows). This demonstrates that practical distributed systems are often compositions of algorithms, each solving a specific sub-problem within a larger architecture.</p>
+
+                <h3>Table 6: Characteristics of Key Routing Algorithms</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Type</th>
+                            <th>Network Type</th>
+                            <th>Key Mechanism</th>
+                            <th>Assumptions/Requirements</th>
+                            <th>Worst-Case Message Complexity</th>
+                            <th>Key Strengths</th>
+                            <th>Key Weaknesses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Chandy-Misra</strong></td>
+                            <td>Centralized (Single-Source)</td>
+                            <td>Undirected</td>
+                            <td>Distance relaxation</td>
+                            <td>Weighted</td>
+                            <td>Exponential</td>
+                            <td>Simplicity</td>
+                            <td>High worst-case messages</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Merlin-Segall</strong></td>
+                            <td>Centralized (Single-Source)</td>
+                            <td>Undirected</td>
+                            <td>Round-based distance updates</td>
+                            <td>Weighted, Initiator knows N</td>
+                            <td>Θ(N^2 * E)</td>
+                            <td>Structured convergence, robustness to topology changes</td>
+                            <td>High message overhead</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Toueg's</strong></td>
+                            <td>Decentralized (All-Pairs)</td>
+                            <td>Undirected</td>
+                            <td>Distributed Floyd-Warshall</td>
+                            <td>Weighted, Global ID knowledge, uniform pivot selection</td>
+                            <td>O(N^2)</td>
+                            <td>All-pairs shortest paths, decentralized</td>
+                            <td>Strong assumptions, high bit complexity</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Distance-Vector (Internet)</strong></td>
+                            <td>Decentralized (Distributed)</td>
+                            <td>Directed/Dynamic</td>
+                            <td>Routing table exchange</td>
+                            <td>Dynamic topology</td>
+                            <td>Varies</td>
+                            <td>Adaptive to changes, simple local updates</td>
+                            <td>Scalability issues (count-to-infinity), full table exchange</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Link-State (Internet)</strong></td>
+                            <td>Decentralized (Distributed)</td>
+                            <td>Directed/Dynamic</td>
+                            <td>Link-state packet flooding</td>
+                            <td>Dynamic topology</td>
+                            <td>Varies</td>
+                            <td>Global view (local), faster convergence</td>
+                            <td>Scalability issues (flooding overhead), large local state</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="election" class="content-section">
+                <h2>Chapter 9: Election</h2>
+                <p>Election algorithms are used to select a unique leader in a distributed system. This section covers algorithms for ring topologies (Chang-Roberts, Franklin, Dolev-Klawe-Rodeh), tree-based election, the Echo algorithm with extinction, and the Gallager-Humblet-Spira (GHS) algorithm for Minimum Spanning Trees, which can be adapted for election.</p>
+                <p>In a distributed system, an "election algorithm" is designed to select a single process among a group of processes to serve as a "leader." This leader typically takes on coordinating roles, such as acting as the root of a spanning tree, the initiator of a centralized algorithm, a central decision point, or an assembly point for information.[1] The fundamental challenge in designing election algorithms is to effectively break the inherent symmetry within a network, ensuring that exactly one process emerges as the leader. Election algorithms are inherently decentralized, meaning any non-empty set of processes can initiate the election. All participating processes must execute the same local algorithm, and process IDs are generally assumed to be unique and drawn from a totally ordered set, which is crucial for guaranteeing termination.[1]</p>
+                <p>The problem of election is the quintessential "symmetry-breaking" problem in distributed systems. Without unique identifiers or some form of external bias (such as a pre-designated central coordinator), it is impossible to deterministically select a single leader in a perfectly symmetric network. If all processes are identical and start in identical states, any deterministic action taken by one process could be taken by all others simultaneously, preserving the symmetry and preventing a unique leader from emerging. Unique IDs provide the necessary "tie-breaker" to overcome this fundamental limitation, allowing for a deterministic selection process.</p>
+
+                <h3>Election in Rings</h3>
+                <p>Ring topologies pose a particular challenge for election algorithms due to their high degree of symmetry.</p>
+                <ul>
+                    <li><strong>Chang-Roberts Algorithm (Directed Ring):</strong> This algorithm operates on a directed ring. Initiators send messages tagged with their unique ID to the next process in the ring. When an active process <code>p</code> receives a message tagged with ID <code>q</code>:
+                        <ul>
+                            <li>If <code>q < p</code>, <code>p</code> dismisses the message.</li>
+                            <li>If <code>q > p</code>, <code>p</code> becomes passive and forwards the message.</li>
+                            <li>If <code>q = p</code>, <code>p</code> recognizes its own message completing a round trip and becomes the leader.[1]</li>
+                        </ul>
+                        The core idea is that only the message carrying the highest ID will successfully complete a full round trip, as all other messages are either dismissed or forwarded by processes with higher IDs. Initiators that do not hold the highest ID are eventually made passive. The worst-case message complexity for the Chang-Roberts algorithm is <code>O(N^2)</code>, though its average-case message complexity is <code>O(N log N)</code>.[1]
+                    </li>
+                    <li><strong>Franklin's Algorithm (Undirected Ring):</strong> This algorithm improves on the worst-case message complexity of Chang-Roberts by operating on an undirected ring. It proceeds in election rounds. In each round, an active process <code>p</code> compares its own ID with the IDs of its two nearest active neighbors.
+                        <ul>
+                            <li>If <code>p</code>'s ID is the largest of the three, <code>p</code> proceeds to the next election round by sending its ID in both directions again.</li>
+                            <li>If one of the other IDs is greater than <code>p</code>'s ID, <code>p</code> becomes passive.</li>
+                            <li>If <code>p</code> receives its own ID from either side, it becomes the leader, as this indicates no other active processes remain in the ring.[1]</li>
+                        </ul>
+                        The worst-case message complexity of Franklin's algorithm is <code>O(N log N)</code>. This efficiency stems from the fact that in each round with two or more active processes, at least half of the active processes become passive (because for any pair of nearest active neighbors, at least one will become passive). This logarithmic reduction in active participants, combined with <code>2N</code> messages per round, yields the improved complexity.[1]
+                    </li>
+                    <li><strong>Dolev-Klawe-Rodeh Algorithm (Directed Ring):</strong> This algorithm adapts the principles of Franklin's algorithm to a directed ring. Since messages cannot travel bidirectionally, an active process <code>r</code> collects the IDs <code>p</code> and <code>q</code> from its two nearest active predecessors (using attached bits to determine their relative positions). Based on these collected IDs, <code>r</code> makes a decision as if it were the middle process <code>p</code>:
+                        <ul>
+                            <li>If <code>max{q, r} < p</code>, then <code>r</code> enters the next election round, assuming the ID <code>p</code>, and sends <code>(id, p, 0)</code> to its successor.</li>
+                            <li>If <code>max{q, r} > p</code>, then <code>r</code> becomes passive.</li>
+                            <li>If <code>max{q, r} = p</code>, then <code>r</code> becomes the leader (or informs the original process with ID <code>p</code> that it is the leader).[1]</li>
+                        </ul>
+                        The worst-case message complexity of the Dolev-Klawe-Rodeh algorithm is also <code>O(N log N)</code>, as it similarly achieves a logarithmic reduction in active processes per round.[1]
+                    </li>
+                </ul>
+                <p>The evolution from Chang-Roberts to Franklin's and Dolev-Klawe-Rodeh algorithms for rings demonstrates a clear trend towards improving efficiency (from <code>O(N^2)</code> to <code>O(N log N)</code>) by leveraging local comparisons and actively eliminating processes from the "race" early. Chang-Roberts relies on a single highest-ID message completing a full loop, which can be slow if the highest ID is far away in an unfavorable direction. In contrast, Franklin's and Dolev-Klawe-Rodeh actively reduce the number of contenders in each round through local comparisons, effectively halving the active set. This logarithmic reduction in active participants is the key to their improved complexity.</p>
+
+                <h3>Tree Election Algorithm</h3>
+                <p>This algorithm is designed for acyclic undirected networks and is based on the general tree algorithm (Section 4.2).[1]</p>
+                <ul>
+                    <li><strong>Wake-up Phase:</strong> Since the tree algorithm typically starts from leaves and election initiators can be any non-empty set of processes, a "wake-up phase" is initiated. Initiators send wake-up messages to their neighbors, which are then flooded throughout the network. A non-initiator wakes up upon receiving its first wake-up message and then propagates it to its neighbors.[1] This phase ensures that all processes are aware of the election and participate, effectively transforming a potentially partial initiation into a full network-wide process.</li>
+                    <li><strong>Election Phase:</strong> Once a process <code>p</code> has received wake-up messages from all but one of its neighbors, it designates that neighbor as its parent. It then computes <code>max_p</code>, which is the largest ID among the IDs received from its children and its own ID, and sends this <code>max_p</code> value to its parent. If <code>p</code> receives a parent message from its parent tagged with an ID <code>r</code>, it computes a new maximum (<code>max_p'</code>) from <code>r</code> and its previously computed <code>max_p</code>, and then sends an information message tagged with <code>max_p'</code> to all its children. This process propagates the maximum ID upwards through the tree. Eventually, the process with the largest ID in the network becomes the leader.[1]</li>
+                </ul>
+                <p>The tree election algorithm requires <code>2N-2</code> messages for the election phase and an additional <code>2N-2</code> messages for the wake-up phase.[1]</p>
+
+                <h3>Echo Algorithm with Extinction</h3>
+                <p>This election algorithm is designed for undirected networks of any topology.[1] It leverages a "competitive flooding" strategy where each initiator starts an echo wave (Section 4.3) tagged with its unique ID.</p>
+                <ul>
+                    <li>When a process <code>p</code> is participating in a wave tagged with ID <code>q</code> and is hit by another wave tagged with ID <code>r</code>:
+                        <ul>
+                            <li>If <code>q < r</code>, <code>p</code> switches its allegiance to wave <code>r</code>, makes the sender of <code>r</code> its new parent, and abandons any messages related to wave <code>q</code>.</li>
+                            <li>If <code>q > r</code>, <code>p</code> dismisses the incoming message <code>r</code> and continues with wave <code>q</code>.</li>
+                            <li>If <code>q = r</code>, <code>p</code> processes the incoming message according to the standard echo algorithm for wave <code>q</code>.[1]</li>
+                        </ul>
+                    </li>
+                    <li>The algorithm ensures that only the wave initiated by the process with the largest ID among all initiators will successfully complete. All other waves are "extinguished" as processes switch to stronger waves.[1] When a wave initiated by process <code>p</code> completes (i.e., <code>p</code> executes a decide event), <code>p</code> becomes the leader.[1] The worst-case message complexity of this algorithm is <code>O(N * E)</code>.[1]</li>
+                </ul>
+                <p>The echo algorithm with extinction uses a "competitive flooding" strategy, where multiple waves propagate, but only the "strongest" (highest ID) wave survives and completes. This pattern is effective for leader election in general topologies because it does not rely on specific network structures like rings or trees. Instead, it leverages the inherent propagation of information and the ability of processes to "extinguish" weaker contenders by switching their participation to waves with higher IDs. This makes it a robust method for finding a global maximum in a distributed setting without requiring a central point or complex aggregation.</p>
+
+                <h3>Minimum Spanning Trees (MST)</h3>
+                <p>The chapter introduces Minimum Spanning Trees (MSTs) as a seemingly unrelated topic that, surprisingly, yields an efficient election algorithm. An MST of an undirected weighted network is a spanning tree for which the sum of the weights of its channels is minimal. For convenience, it is often assumed that different channels have different weights, guaranteeing a unique MST. If weights are identical, a total order on channels (e.g., using endpoint IDs) can be imposed.[1] Kruskal's algorithm, a centralized MST algorithm, builds the MST by iteratively joining "fragments" (connected subgraphs of the MST) via their lowest-weight outgoing edges.[1]</p>
+                <p>The inclusion of MST algorithms in the Election chapter, particularly the Gallager-Humblet-Spira algorithm, highlights a powerful concept in distributed computing: sometimes, solving a seemingly unrelated problem can yield an efficient solution to another as a byproduct. This demonstrates the interconnectedness of distributed problems and the potential for unexpected algorithmic synergies. The MST problem inherently involves identifying a globally optimal structure based on local information (edge weights). The Gallager-Humblet-Spira algorithm's process of fragment merging and identifying core edges creates a hierarchical structure. If process IDs are used as weights (or as tie-breakers), the process that ends up at the "center" or "root" of the final MST (e.g., the core node of the final fragment) can be designated as the leader. This is a clever transformation of one problem into another.</p>
+
+                <h3>Gallager-Humblet-Spira Algorithm (GHS)</h3>
+                <p>The GHS algorithm is a distributed version of Kruskal's algorithm for constructing MSTs in undirected, weighted networks, assuming distinct channel weights or a total ordering.[1]</p>
+                <ul>
+                    <li><strong>Core Idea:</strong> Fragments (connected subgraphs of the MST) are iteratively merged. Each fragment maintains a unique "name" (typically the weight of its "core edge," which is the last channel used to join two subfragments at the same level) and a "level" (the maximum number of joins experienced by any process in the fragment).[1] The core edge serves as the central computing unit for the fragment.</li>
+                    <li><strong>Process States:</strong> Processes can be in one of three states: <code>sleep</code> (a special initial state for non-initiators), <code>find</code> (actively looking for its lowest-weight outgoing edge), or <code>found</code> (reported its lowest-weight outgoing edge and is waiting for instructions).[1]</li>
+                    <li><strong>Channel Status:</strong> Channels are classified as <code>basic edge</code> (undecided), <code>branch edge</code> (part of MST), or <code>rejected</code> (not part of MST).[1]</li>
+                    <li><strong>Fragment Joining Scenarios:</strong> When two fragments join via a channel <code>pq</code>:
+                        <ul>
+                            <li>If they have different levels (<code>l < l'</code>), the fragment with the lower level (<code>l</code>) adopts the name and level of the higher-level fragment (<code>l'</code>).</li>
+                            <li>If they have the same level (<code>l = l'</code>), the new joint fragment receives a new name (the weight of <code>pq</code>) and its level increases by 1 (<code>l+1</code>). The channel <code>pq</code> becomes the new core edge.[1]</li>
+                        </ul>
+                    </li>
+                    <li><strong>Mechanism Flow (Simplified):</strong>
+                        <ul>
+                            <li>Initiators (or woken processes) set their lowest-weight channel to <code>branch</code>, enter <code>found</code> state, and send <code>(connect, 0)</code> messages.</li>
+                            <li><code>Connect</code> messages (<code>(connect, l)</code>) from <code>p</code> to <code>q</code> trigger different responses based on <code>q</code>'s fragment level. If <code>q</code>'s level <code>l'</code> is greater than <code>l</code>, <code>q</code> sends <code>(initiate, fn', l', find/found)</code> to <code>p</code>. If <code>l' = l</code> and <code>qp</code> becomes a branch edge, <code>p</code> and <code>q</code> exchange <code>(initiate, weight(pq), l+1, find)</code>.[1]</li>
+                            <li><code>Initiate</code> messages (<code>(initiate, fn, l, find/found)</code>) cause processes to update their fragment name and level, adopt the specified state, and set the sender as their parent.</li>
+                            <li>Processes in the <code>find</code> state test their <code>basic edges</code> by sending <code>(test, fn, l)</code> messages. The reply is <code>reject</code> (if in the same fragment) or <code>accept</code> (if in a different fragment).[1]</li>
+                            <li>Processes in the <code>found</code> state report the minimum weight (<code>λ_p</code>) of their local lowest-weight outgoing edge and reports from their children to their parent.[1]</li>
+                            <li>Core nodes, upon receiving reports, determine the lowest-weight outgoing edge (<code>μ</code>) for the entire fragment. If <code>μ</code> is finite, the core node that received <code>μ</code> first sends a <code>changeroot</code> message towards the process <code>p</code> that originally reported <code>μ</code>. <code>p</code> then sets that channel to <code>branch</code> and sends a <code>(connect, l)</code> message into it.[1]</li>
+                        </ul>
+                    </li>
+                    <li><strong>Deadlock-Freeness:</strong> The algorithm is designed to be deadlock-free, ensuring that postponed messages are eventually processed.[1]</li>
+                    <li><strong>Complexity:</strong> The GHS algorithm achieves an optimal message complexity of <code>O(E + N log N)</code>.[1] This optimality is achieved by intelligently merging fragments. The "level" concept and the rules for joining fragments (different levels vs. same level) ensure that the algorithm makes progress efficiently, effectively doubling the size of fragments (in terms of processes) each time a process experiences a join, leading to the logarithmic factor.</li>
+                    <li><strong>Election Application:</strong> The GHS algorithm can be adapted for leader election. By adding two extra messages at the very end, the core node with the largest ID can be designated as the leader. This makes GHS an optimal election algorithm for general undirected networks.[1]</li>
+                </ul>
+
+                <h3>Table 7: Characteristics of Key Election Algorithms</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Algorithm</th>
+                            <th>Network Type</th>
+                            <th>Key Mechanism</th>
+                            <th>Assumptions/Requirements</th>
+                            <th>Worst-Case Message Complexity</th>
+                            <th>Key Strengths</th>
+                            <th>Key Weaknesses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Chang-Roberts</strong></td>
+                            <td>Directed Ring</td>
+                            <td>Highest ID message completes round trip</td>
+                            <td>Unique IDs</td>
+                            <td>O(N^2)</td>
+                            <td>Simplicity, clear leader identification</td>
+                            <td>High message overhead in worst-case</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Franklin's</strong></td>
+                            <td>Undirected Ring</td>
+                            <td>Local comparisons, active processes halved per round</td>
+                            <td>Unique IDs</td>
+                            <td>O(N log N)</td>
+                            <td>Efficient for rings, logarithmic reduction</td>
+                            <td>Requires undirected ring, specific local comparison</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Dolev-Klawe-Rodeh</strong></td>
+                            <td>Directed Ring</td>
+                            <td>Transposed Franklin's, ID collection, active processes halved</td>
+                            <td>Unique IDs</td>
+                            <td>O(N log N)</td>
+                            <td>Efficient for directed rings, logarithmic reduction</td>
+                            <td>Requires directed ring, complex ID collection logic</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Tree Election</strong></td>
+                            <td>Acyclic Undirected</td>
+                            <td>Wake-up phase, ID aggregation up a tree</td>
+                            <td>Unique IDs, Acyclic network</td>
+                            <td>O(N)</td>
+                            <td>Simple for tree topologies, all nodes participate</td>
+                            <td>Not for cyclic networks, requires wake-up phase</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Echo with Extinction</strong></td>
+                            <td>Undirected (Any)</td>
+                            <td>Competitive flooding, higher ID waves extinguish lower</td>
+                            <td>Unique IDs</td>
+                            <td>O(N * E)</td>
+                            <td>Robust for general topologies, finds global max</td>
+                            <td>Higher message overhead than ring algorithms</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Gallager-Humblet-Spira</strong></td>
+                            <td>Undirected (Any)</td>
+                            <td>Distributed fragment merging (MST), level concept</td>
+                            <td>Unique IDs, Weighted channels (or total order)</td>
+                            <td>O(E + N log N)</td>
+                            <td>Optimal complexity, robust, general topology</td>
+                            <td>Complex algorithm, requires weights</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="anonymous-networks" class="content-section">
+                <h2>Chapter 10: Anonymous Networks</h2>
+                <p>This chapter explores algorithms for anonymous networks, where processes lack unique identifiers. It covers the impossibility of deterministic election in anonymous rings, probabilistic algorithms (Las Vegas and Monte Carlo types), Itai-Rodeh's election and ring size algorithms, and the FireWire election protocol.</p>
+                <p>Anonymous networks are distributed systems where processes lack unique identifiers. This scenario can arise from hardware limitations (e.g., no unique hardware IDs) or from design choices (e.g., security concerns or cost of transmitting/storing IDs, as in IEEE 1394).[1] The absence of unique IDs fundamentally changes the landscape of distributed algorithm design, particularly for tasks like leader election.</p>
+
+                <h3>Impossibility of Election in Anonymous Rings</h3>
+                <p>A foundational result in distributed computing states that no deterministic election algorithm can always terminate in anonymous rings.[1] The proof relies on the concept of symmetry: if an algorithm is run on an anonymous ring of size <code>N > 1</code> starting from a symmetric initial configuration (where all processes are in the same state and all channels are empty), any transition made by one process can logically be made by all others. This implies that the system can always transition to another symmetric configuration. Since a unique leader cannot be identified in a symmetric configuration (as all processes are identical), this leads to the existence of an infinite execution that continuously visits symmetric configurations, preventing a leader from ever being elected.[1] This result underscores that unique process IDs are a crucial ingredient for deterministic election algorithms to break symmetry.</p>
+
+                <h3>Probabilistic Algorithms</h3>
+                <p>Given the impossibility of deterministic election in anonymous rings, probabilistic algorithms are introduced, where events can occur with a certain probability (e.g., by flipping a coin).[1] These algorithms are categorized by their termination and correctness guarantees:</p>
+                <ul>
+                    <li><strong>Las Vegas algorithms:</strong> These algorithms always produce a correct outcome if they terminate, and they terminate with a probability greater than zero. Critically, if a Las Vegas algorithm terminates with probability one, any infinite executions it might have collectively possess zero probability mass.[1]</li>
+                    <li><strong>Monte Carlo algorithms:</strong> These algorithms are guaranteed to terminate, but the correctness of their outcome is probabilistic (i.e., the probability of a correct terminal configuration is greater than zero, but not necessarily one).[1]</li>
+                </ul>
+
+                <h3>Itai-Rodeh Election Algorithm for Rings</h3>
+                <p>The Itai-Rodeh algorithm is a Las Vegas election algorithm designed for anonymous directed rings that terminates with probability one.[1] It adapts the Chang-Roberts algorithm by having initiators randomly select an ID (from a domain like <code>{1,..., N}</code>) and send it out. The algorithm proceeds in election rounds. Messages carry the round number, the source ID, a hop count (requiring processes to know the ring size <code>N</code>), and a Boolean flag indicating if another active process selected the same ID in the current round. Only messages with the largest ID for the current round complete their round trip. If a process receives its own message back and the Boolean flag is <code>true</code>, it means multiple active processes selected the same largest ID, so they all proceed to the next round. If the Boolean flag is <code>false</code>, the process becomes the leader.[1] Round numbers are essential to prevent processes from becoming passive due to delayed messages from earlier rounds.[1] The average-case message complexity of the Itai-Rodeh algorithm is <code>O(N log N)</code>.[1]</p>
+
+                <h3>Echo Algorithm with Extinction for Anonymous Networks</h3>
+                <p>This algorithm adapts the echo algorithm with extinction (Section 9.3) for anonymous undirected networks.[1] It also proceeds in rounds. At the start of each round, active processes randomly select an ID and initiate an echo wave tagged with the round number and their chosen ID. Processes switch to waves with higher round numbers or, if round numbers are equal, to waves with higher IDs. When a wave completes, its initiator reports the size of the subgraph it covered. If this size equals the known network size <code>N</code>, the initiator becomes the leader; otherwise, it proceeds to the next election round. This is a Las Vegas algorithm that terminates with probability one, with a worst-case message complexity of <code>O(N * E)</code>.[1]</p>
+
+                <h3>Computing the Size of an Anonymous Ring Is Impossible</h3>
+                <p>A significant impossibility result states that there is no Las Vegas algorithm to compute the size of an anonymous ring if processes do not know the ring size.[1] This is demonstrated by showing that any algorithm designed for a ring of size <code>N</code> could produce an incorrect outcome (<code>N</code>) when run on a ring of size <code>2N</code>. This is because processes in the larger ring cannot distinguish their environment from that of the smaller ring, as they lack unique IDs to differentiate halves of the network.[1] This impossibility implies that knowing the network size is a crucial prerequisite for Las Vegas election algorithms in anonymous rings.</p>
+
+                <h3>Itai-Rodeh Ring Size Algorithm</h3>
+                <p>Given the impossibility of a Las Vegas algorithm for computing anonymous ring size, the Itai-Rodeh ring size algorithm is a Monte Carlo algorithm, meaning it may terminate with an incorrect outcome (an estimate smaller than <code>N</code>).[1] However, the probability of an erroneous outcome can be made arbitrarily close to zero by allowing processes to randomly select IDs from a sufficiently large domain.[1] Each process <code>p</code> maintains an estimate <code>est_p</code> of the ring size, initially <code>2</code>. Processes initiate a new estimate round whenever their current estimate is found to be too conservative. In each round, <code>p</code> randomly selects an ID and sends a message containing its estimate and a hop count. The algorithm includes rules for updating <code>est_p</code> based on incoming messages, distinguishing between messages from more conservative estimates, improved estimates, or agreeing estimates. The algorithm converges to the same estimate at all processes, but this estimate might be less than the actual ring size if, in a round with an estimate <code>est < N</code>, all processes at distance <code>est</code> from each other happen to select the same ID.[1] The worst-case message complexity is <code>O(N^3)</code>.[1]</p>
+
+                <h3>Election in IEEE 1394 (FireWire)</h3>
+                <p>The IEEE 1394 serial bus standard includes an election algorithm for connecting devices, which operates in anonymous, acyclic undirected networks where the network size is unknown.[1] This algorithm is a variant of the tree algorithm (Section 4.2). All processes are initiators. Processes with only one possible parent send a "parent request" to that neighbor. "Root contention" occurs when the last two parentless processes simultaneously send parent requests to each other. This contention is resolved probabilistically: one process randomly decides to wait, while the other immediately resends its request. The waiting process then becomes the leader.[1] In practice, a timeout mechanism is included to handle networks that might contain cycles, which would otherwise lead to a deadlock.[1]</p>
+            </div>
+
+            <div id="fault-tolerance-consensus" class="content-section">
+                <h2>Sections 12.1-12.5: Fault Tolerance (Consensus with Crash Failures)</h2>
+                <p>This section addresses fault tolerance, specifically focusing on the consensus problem in the presence of crash failures. It covers the impossibility of 1-crash consensus in asynchronous systems without failure detectors, the Bracha-Toueg k-crash consensus algorithm, the role and types of failure detectors, and consensus algorithms that utilize them (Rotating Coordinator, Chandra-Toueg).</p>
+                <p>In distributed systems, processes may experience "crash failures," where they permanently and unexpectedly cease execution.[1] The ability of the system to continue functioning correctly despite such failures is paramount. A common assumption in fault-tolerant distributed algorithms is that the network topology is "complete," ensuring that strong connectivity is maintained even after processes crash.[1]</p>
+                <p>The "consensus problem" is a fundamental challenge in fault-tolerant distributed computing: correct processes (those that have not crashed) must eventually agree on a single value. For "crash consensus algorithms," which cope with up to <code>k</code> crashing processes, three properties must be satisfied in all executions:</p>
+                <ul>
+                    <li><strong>Termination:</strong> Every correct process eventually decides on a value.</li>
+                    <li><strong>Agreement:</strong> All correct processes decide on the same value.</li>
+                    <li><strong>Validity:</strong> If all processes initially choose the same value, then all correct processes decide on that value (preventing trivial solutions where a predetermined value is always chosen).[1]</li>
+                </ul>
+                <p>A "bivalent configuration" is a reachable state from which the system can potentially reach a terminal configuration deciding for 0, as well as a terminal configuration deciding for 1. The validity requirement implies that every crash consensus algorithm must have at least one bivalent initial configuration.[1]</p>
+
+                <h3>Impossibility of 1-Crash Consensus</h3>
+                <p>A critical result in asynchronous distributed systems states that it is impossible to develop a terminating algorithm for 1-crash consensus if processes cannot observe whether another process has crashed.[1] The core argument is that in an asynchronous setting, any decision for 0 or 1 must, at some point, be initiated by an event at a single process <code>p</code>. If <code>p</code> crashes immediately after this critical event, and any message sent by <code>p</code> experiences an indefinite delay, the remaining processes cannot reliably mimic <code>p</code>'s decision without its input. This implies that a bivalent configuration can always transition to another bivalent configuration, leading to an infinite execution where no decision is ever made.[1] This impossibility holds regardless of the network size.</p>
+
+                <h3>Bracha-Toueg Crash Consensus Algorithm</h3>
+                <p>The impossibility result extends further: there is no Las Vegas algorithm for <code>k</code>-crash consensus if <code>k ≥ N/2</code> (half the network size).[1] This is because the network can be conceptually divided into two halves, each of which might falsely assume the other half has crashed (due to extremely slow communication), leading to conflicting decisions. However, if <code>k < N/2</code>, a Las Vegas algorithm for <code>k</code>-crash consensus does exist. The Bracha-Toueg algorithm operates in rounds, with each correct, undecided process <code>p</code> initially choosing a random value (0 or 1) and assigning it to <code>value_p</code> with a <code>weight_p</code> of 1 (representing its own vote).[1]</p>
+                <p>In each round <code>n ≥ 0</code>:</p>
+                <ul>
+                    <li>Process <code>p</code> sends <code>(n, value_p, weight_p)</code> to all processes.</li>
+                    <li><code>p</code> waits to receive <code>N-k</code> messages <code>(n, b, w)</code>. (Messages from earlier/future rounds are dismissed/stored.)</li>
+                    <li><code>p</code> updates its <code>value_p</code>: if any incoming message <code>(n, b, w)</code> has <code>w > N/2</code>, <code>value_p</code> is set to <code>b</code>. Otherwise, <code>value_p</code> is set to 0 if most messages voted 0, or 1 otherwise.</li>
+                    <li><code>weight_p</code> is updated to the number of incoming votes for the new <code>value_p</code> in round <code>n</code>.</li>
+                    <li>If <code>p</code> receives more than <code>k</code> incoming messages <code>(n, b, w)</code> where <code>w > N/2</code>, it decides for <code>b</code>. If <code>p</code> decides, it broadcasts <code>(n+1, b, N-k)</code> and <code>(n+2, b, N-k)</code> and terminates.[1]</li>
+                </ul>
+                <p>The algorithm guarantees agreement and validity. With fair scheduling of messages, it is a Las Vegas algorithm that terminates with probability one.[1]</p>
+
+                <h3>Failure Detectors</h3>
+                <p>The impossibility result of 1-crash consensus (Theorem 12.1) assumes that crashes cannot be observed. To overcome this, "failure detectors" are introduced, which are mechanisms processes use to suspect crashed processes.[1] Failure detectors are characterized by properties:</p>
+                <ul>
+                    <li><strong>Completeness:</strong> Every crashed process is eventually suspected by every correct process.[1]</li>
+                    <li><strong>Strongly Accurate:</strong> Only crashed processes are ever suspected. In bounded delay networks, this can be implemented by processes broadcasting "alive" messages and suspecting those from whom no message has been received for longer than a certain time (e.g., <code>ν + d_max</code>).[1]</li>
+                    <li><strong>Eventually Strongly Accurate:</strong> From some point in time onward, only crashed processes are suspected (false suspicions can occur initially). This can be implemented in networks with unknown but bounded delay by processes guessing network latency and increasing their guess if a suspected process sends a message.[1]</li>
+                    <li><strong>Weakly Accurate:</strong> Some correct process is never suspected by the other processes.[1]</li>
+                    <li><strong>Eventually Weakly Accurate:</strong> From some point in time onward, some correct process is never suspected by the other processes.[1]</li>
+                </ul>
+
+                <h3>Consensus with a Weakly Accurate Failure Detector</h3>
+                <p>In the presence of a (complete and) weakly accurate failure detector, a simple <code>k</code>-crash consensus algorithm exists for any <code>k < N</code>. This "rotating coordinator algorithm" proceeds in rounds <code>n = 0,..., N-1</code>. In each round <code>n</code>, process <code>p_n</code> acts as the coordinator. If <code>p_n</code> is not crashed, it broadcasts its current value. Each other process waits either for a message from <code>p_n</code> (adopting its value) or until it suspects <code>p_n</code> has crashed. Processes then move to the next round. After round <code>N-1</code>, each correct process decides for its current value.[1] Termination is guaranteed by the completeness of the failure detector. Agreement is ensured by the weakly accurate property: since some correct process <code>p_i</code> is never suspected, all correct processes will eventually adopt <code>p_i</code>'s value after round <code>i</code>, and maintain it until the end.[1]</p>
+
+                <h3>Chandra-Toueg Algorithm</h3>
+                <p>The impossibility result for <code>k</code>-crash consensus with <code>k ≥ N/2</code> still holds even with an eventually strongly accurate failure detector, as false suspicions can persist for an indefinite period.[1] However, the Chandra-Toueg crash consensus algorithm, which uses an eventually weakly accurate failure detector, is an always correctly terminating <code>k</code>-crash consensus algorithm if <code>k < N/2</code>.[1] Processes are numbered (<code>p0,..., pN-1</code>), and each round <code>n</code> is coordinated by <code>p_c</code> where <code>c = n mod N</code>. In each round:</p>
+                <ul>
+                    <li>Every correct, undecided process <code>q</code> sends <code>(vote, n, value_q, last-update_q)</code> to the coordinator <code>p_c</code>.</li>
+                    <li><code>p_c</code> (if not crashed or decided) waits for <code>N-k</code> such messages, selects a value <code>b</code> with the maximal <code>last-update</code> round, and broadcasts <code>(value, n, b)</code>.</li>
+                    <li>Every correct, undecided process <code>q</code> waits for <code>(value, n, b)</code> from <code>p_c</code> (adopting <code>b</code> and sending <code>ack</code>) or until it suspects <code>p_c</code> has crashed (sending <code>nack</code>).</li>
+                    <li><code>p_c</code> decides if it receives more than <code>k</code> <code>ack</code> messages. If it decides, it broadcasts a <code>decide</code> message and terminates.[1]</li>
+                </ul>
+                <p>The algorithm guarantees agreement and validity, and always terminates.</p>
+            </div>
+
+            <div id="mutual-exclusion" class="content-section">
+                <h2>Sections 14.1-14.3: Mutual Exclusion</h2>
+                <p>Mutual exclusion algorithms ensure that only one process can access a shared resource at a time. This section details permission-based (Ricart-Agrawala), token-passing (Raymond's), and quorum-based (Agrawal-El Abbadi) approaches, along with their properties like starvation-freeness and fault tolerance aspects.</p>
+                <p>Mutual exclusion is a fundamental problem in distributed computing that ensures that when multiple processes wish to access a shared resource or perform a critical task, only one process is "privileged" at any given time.[1] Beyond simply ensuring mutual exclusion, algorithms also strive for "starvation-freeness," meaning that any process attempting to enter its critical section will eventually succeed, provided no other process holds the privilege indefinitely.[1]</p>
+
+                <h3>1. Ricart-Agrawala Algorithm</h3>
+                <p>This algorithm is a permission-based mutual exclusion algorithm that relies on a logical clock, typically Lamport's logical clock, and assumes a complete network topology with indexed processes (<code>p0,..., pN-1</code>).[1]</p>
+                <ul>
+                    <li><strong>Mechanism:</strong> When a process <code>p_i</code> wants to enter its critical section, it broadcasts a <code>request</code> message to all other <code>N-1</code> processes. This message is tagged with <code>p_i</code>'s logical timestamp (<code>ts_i</code>) and its index (<code>i</code>). Requests are prioritized lexicographically: a smaller timestamp has higher priority, and in case of a timestamp tie, the process with the lower index has higher priority. When another process <code>p_j</code> receives <code>p_i</code>'s request, <code>p_j</code> sends <code>permission</code> to <code>p_i</code> if <code>p_j</code> is not currently privileged AND <code>p_j</code> does not have a pending request with a logical timestamp (<code>ts_j</code>) that is lexicographically smaller than (<code>ts_i, i</code>). Process <code>p_i</code> enters its critical section only after receiving <code>permission</code> from all <code>N-1</code> other processes. Upon exiting its critical section, <code>p_i</code> sends <code>permission</code> in reply to all pending requests.[1] The algorithm does not require a full logical clock; receiving a request with timestamp <code>t</code> is sufficient to update the receiver's clock to <code>t+1</code>.[1]</li>
+                    <li><strong>Guarantees:</strong> The algorithm guarantees mutual exclusion because when a process <code>q</code> sends <code>permission</code> to <code>p</code>, <code>q</code> is either not privileged or its own pending request has a lower priority than <code>p</code>'s. It also ensures starvation-freeness, as every request will eventually become the highest priority in the network.[1]</li>
+                    <li><strong>Drawbacks:</strong> The main drawback is its high message overhead, requiring <code>2(N-1)</code> messages per critical section entry (N-1 requests, N-1 permissions).[1]</li>
+                    <li><strong>Carvalho-Roucairol Optimization:</strong> This optimization reduces message overhead by having a process <code>p_i</code> that wants to re-enter its critical section send requests only to processes in a dynamic set <code>Requests_i</code>. This set initially includes all processes except <code>p_i</code> and is emptied when <code>p_i</code> exits its critical section. When <code>p_i</code> sends <code>permission</code> to <code>q</code>, it adds <code>q</code> to <code>Requests_i</code>. If a process <code>q</code> (not in <code>Requests_i</code>) sends a request to <code>p_i</code> while <code>p_i</code> is waiting for permissions, and <code>q</code>'s request has higher priority, <code>p_i</code> sends both <code>permission</code> and a <code>request</code> to <code>q</code>. This optimization maintains mutual exclusion by ensuring that for any pair of processes <code>p_i</code>, <code>p_j</code>, either <code>p_i</code> is in <code>Requests_j</code> or <code>p_j</code> is in <code>Requests_i</code>.[1]</li>
+                </ul>
+
+                <h3>2. Raymond's Algorithm</h3>
+                <p>Raymond's algorithm is a token-passing mutual exclusion algorithm for undirected networks, which typically begins by establishing a spanning tree.[1] Only the process currently holding the token is privileged.</p>
+                <ul>
+                    <li><strong>Mechanism:</strong> The algorithm maintains a dynamic "root" of the spanning tree, which is the process holding the token. Each process maintains a FIFO queue that can store the IDs of its children in the sink tree and its own ID.
+                        <ul>
+                            <li>When a non-root process desires to enter its critical section, it enqueues its own ID.</li>
+                            <li>When a process receives a token request from a child, it enqueues the child's ID.</li>
+                            <li>Each time a non-root's queue gets a new head, it sends a token <code>request</code> to its parent.</li>
+                            <li>When the current root exits its critical section and its queue is or becomes non-empty, it sends the token to the process at the head of its queue, makes that process its new parent, and dequeues the ID.</li>
+                            <li>If the root wants to re-enter its critical section and its queue is empty, it can become privileged immediately.</li>
+                            <li>When a non-root <code>p</code> receives the token: if <code>p</code> is not the process whose ID is at the head of its queue, <code>p</code> forwards the token to that process and makes it its parent. If <code>p</code> <em>is</em> the process whose ID is at the head of its queue, <code>p</code> becomes the new root (has no parent) and is privileged. In both cases, <code>p</code> removes the ID from the head of its queue.[1]</li>
+                        </ul>
+                    </li>
+                    <li><strong>Guarantees:</strong> Mutual exclusion is guaranteed because only one process holds the token at any given time. Starvation-freeness is ensured because IDs in queues eventually move to the head, and the logical chain of IDs in queues never forms a cycle.[1]</li>
+                    <li><strong>Fault-Tolerant Version:</strong> The Chang-Singhal-Liu algorithm is a fault-tolerant extension that uses a sink graph instead of a sink tree, allowing non-roots to have multiple outgoing edges. This variant is "greedy," permitting a process receiving the token to become privileged immediately, even if its ID is not at the head of its queue.[1]</li>
+                </ul>
+
+                <h3>3. Agrawal-El Abbadi Algorithm</h3>
+                <p>This algorithm ensures mutual exclusion by requiring a process to obtain permission from a "quorum" of processes before entering its critical section.[1] The crucial property is that any two quorums must have a non-empty intersection, which guarantees mutual exclusion by preventing different quorums from concurrently making different processes privileged.[1] The algorithm assumes a complete network topology and a fixed number of processes <code>N = 2^(k+1) - 1</code> for some <code>k > 0</code>, structured as a complete binary tree of depth <code>k</code>.[1]</p>
+                <ul>
+                    <li><strong>Mechanism:</strong> A quorum is defined as all processes along a path from the root to any leaf in the binary tree. If a non-leaf process <code>r</code> on this path becomes unresponsive, permission can instead be sought from all processes on two paths: one from each child of <code>r</code> to some leaf.
+                        <ul>
+                            <li>A process <code>p</code> wanting to enter its critical section places the tree's root in a queue.</li>
+                            <li><code>p</code> repeatedly attempts to obtain <code>permission</code> from the process <code>r</code> at the head of its queue.</li>
+                            <li>If successful, <code>r</code> is removed from <code>p</code>'s queue. If <code>r</code> is a non-leaf, one of its two children is appended to <code>p</code>'s queue.</li>
+                            <li>If a non-leaf <code>r</code> is unresponsive, <code>r</code> is removed, and both its children are appended to <code>p</code>'s queue in a fixed order to prevent deadlocks.</li>
+                            <li>If a leaf <code>r</code> is unresponsive, <code>p</code> must abort its current attempt and retry.</li>
+                            <li>When <code>p</code>'s queue becomes empty, it has successfully obtained permission from a quorum and can enter its critical section.</li>
+                            <li>After exiting, <code>p</code> informs each process in the quorum that its permission can be withdrawn.[1]</li>
+                        </ul>
+                    </li>
+                    <li><strong>Fault Tolerance:</strong> The algorithm requires a complete and strongly accurate failure detector. A process withdraws its permission if it detects that the permission-holding process has crashed.[1]</li>
+                    <li><strong>Guarantees:</strong> Mutual exclusion is guaranteed by the intersecting quorum property. Starvation-freeness is provided if a quorum of processes remains alive and no further crashes occur, relying on strict queue management.[1]</li>
+                    <li><strong>Drawbacks:</strong> The algorithm can deadlock if a process crashes while holding a lock in its critical section.[1]</li>
+                </ul>
+            </div>
+
+            <div id="self-stabilization" class="content-section">
+                <h2>Sections 17.1, 17.3: Self-stabilization</h2>
+                <p>Self-stabilizing algorithms can recover from arbitrary incorrect states to a correct configuration. This section introduces the concept, typically in a shared-memory context, and discusses Dijkstra's token ring for mutual exclusion and the Afek-Kutten-Yung spanning tree algorithm as examples.</p>
+                 <p>Self-stabilization is a powerful property for distributed algorithms, enabling them to recover and converge to a correct configuration even when initialized in an arbitrary, potentially incorrect, state. This provides robust fault tolerance against unanticipated events, such as transient hardware errors or malicious intrusions, which might force the system into an invalid configuration. A key requirement is that the system resolves these failures and stabilizes within a relatively short period.[1]</p>
+                <p>Self-stabilizing algorithms are typically presented within a shared-memory framework. This is because in a message-passing environment, all processes might be initialized in a state where they are waiting for messages, leading to a global deadlock where no events occur. In shared memory, processes can observe and react to the values of shared variables at their neighbors, which helps avoid such deadlocks. It is usually assumed that local variables are single-writer registers and that processes can read their neighbors' variable values. Process IDs are generally assumed to be unaffected by hardware errors.[1]</p>
+
+                <h3>Dijkstra's Token Ring for Mutual Exclusion (Section 17.1)</h3>
+                <p>Dijkstra's self-stabilizing token ring algorithm provides mutual exclusion in a directed ring of <code>N</code> processes (<code>p0,..., pN-1</code>). Each process <code>p_i</code> holds a register <code>x_i</code> with values in <code>{0,..., K-1}</code>, where <code>K ≥ N</code>. Process <code>p_i</code> can read the value of its predecessor <code>p_((i-1) mod N)</code>'s register. A process <code>p_i</code> is considered "privileged" if <code>x_i ≠ x_((i-1) mod N)</code>. Only privileged processes can make a move.
+                The algorithm defines rules for privileged processes:</p>
+                <ul>
+                    <li>Process <code>p_0</code> (the "bottom" process): If <code>x_0 = x_(N-1)</code>, then <code>p_0</code> sets <code>x_0</code> to <code>(x_0 + 1) mod K</code>.</li>
+                    <li>Process <code>p_i</code> (for <code>0 < i < N</code>): If <code>x_i ≠ x_(i-1)</code>, then <code>p_i</code> sets <code>x_i</code> to <code>x_(i-1)</code>.</li>
+                </ul>
+                <p>The algorithm guarantees that eventually exactly one process will be privileged, and this privilege will rotate around the ring, ensuring mutual exclusion and starvation-freeness. It stabilizes within <code>O(N^2 * K)</code> moves.[1]</p>
+
+                <h3>Afek-Kutten-Yung Spanning Tree Algorithm (Section 17.3)</h3>
+                <p>This algorithm constructs a spanning tree in an undirected network in a self-stabilizing manner. Each process <code>p</code> maintains <code>parent_p</code> (its parent in the tree, or <code>p</code> if it's the root) and <code>dist_p</code> (its distance to the root). A designated root process <code>r</code> always has <code>dist_r = 0</code> and <code>parent_r = r</code>. Other processes <code>p</code> update their state based on their neighbors' <code>dist</code> values:</p>
+                <ul>
+                    <li>If <code>dist_p > min{dist_q | q is a neighbor of p} + 1</code>, then <code>p</code> sets <code>dist_p</code> to <code>min{dist_q | q is a neighbor of p} + 1</code> and sets <code>parent_p</code> to a neighbor <code>q</code> that achieves this minimum.</li>
+                    <li>If <code>parent_p</code> is not <code>p</code> and <code>dist_p ≠ dist_(parent_p) + 1</code>, then <code>p</code> sets <code>dist_p</code> to <code>dist_(parent_p) + 1</code>.</li>
+                </ul>
+                <p>The algorithm stabilizes to a correct spanning tree rooted at <code>r</code>. The stabilization time depends on the network diameter and the maximum initial distance value.[1]</p>
+            </div>
+
+            <div id="dynamic-networks" class="content-section">
+                <h2>Sections 18.1-18.2, 18.4: Dynamic Networks</h2>
+                <p>Dynamic networks experience changes in topology (processes joining/leaving, links failing/recovering). This section discusses algorithms designed for such environments, including the Chord ring for peer-to-peer systems, the AODV routing protocol for mobile ad-hoc networks, and the Walter-Welch-Vaidya mutual exclusion algorithm.</p>
+                <p>Content for Dynamic Networks to be added from source...</p>
+            </div>
+
+            <div id="distributed-transactions" class="content-section">
+                <h2>Sections 16.1-16.2: Distributed Transactions</h2>
+                <p>Distributed transactions involve operations across multiple data sites. This section covers ACID properties (Atomicity, Consistency, Isolation, Durability), concurrency control mechanisms like two-phase locking and timestamp ordering, optimistic concurrency control, and commit protocols (two-phase and three-phase commit) to ensure atomicity.</p>
+                <p>Content for Distributed Transactions to be added from source...</p>
+            </div>
+
+            <div id="authentication" class="content-section">
+                <h2>Section 19.2: Authentication (Kerberos)</h2>
+                <p>Authentication verifies the identity of communicating parties. This section focuses on the Kerberos protocol, a widely used authentication system that relies on a trusted third party (Key Distribution Center) and tickets to grant access to services.</p>
+                <p>Content for Authentication (Kerberos) to be added from source...</p>
+            </div>
+
+            <div id="key-exchange" class="content-section">
+                <h2>Sections 19.3-19.4: Key Exchange</h2>
+                <p>Key exchange protocols allow parties to securely establish a shared secret key over an insecure channel. This section discusses the Diffie-Hellman protocol (based on modular arithmetic) and the BB84 quantum key distribution protocol (leveraging quantum mechanics).</p>
+                <p>Content for Key Exchange to be added from source...</p>
+            </div>
+
+            <div id="digital-signatures" class="content-section">
+                <h2>Section 19.5: Digital Signatures</h2>
+                <p>Digital signatures provide message authenticity, integrity, and non-repudiation. This section covers one-time signature schemes like Lamport and Winternitz signatures, and the Merkle signature scheme which combines multiple one-time signatures using a hash tree.</p>
+                <p>Content for Digital Signatures to be added from source...</p>
+            </div>
+
+            <div id="blockchains" class="content-section">
+                <h2>Section 19.6: Blockchains (Bitcoin)</h2>
+                <p>Blockchains are distributed, immutable ledgers. This section introduces the fundamental concepts of blockchain technology, focusing on Bitcoin as a prime example, including its transaction mechanism, proof-of-work consensus, and mining process.</p>
+                <p>Content for Blockchains (Bitcoin) to be added from source...</p>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        const navLinks = document.querySelectorAll('#sidebar a');
+        const contentSections = document.querySelectorAll('.content-section');
+        const sidebar = document.getElementById('sidebar');
+        const menuToggle = document.getElementById('menu-toggle');
+        const mainContent = document.getElementById('main-content');
+
+        function showSection(targetId) {
+            contentSections.forEach(section => {
+                section.classList.remove('active');
+                if (section.id === targetId) {
+                    section.classList.add('active');
+                }
+            });
+            navLinks.forEach(link => {
+                link.classList.remove('bg-teal-700', 'text-white', 'font-semibold');
+                link.classList.add('text-stone-200');
+                if (link.getAttribute('href') === `#${targetId}`) {
+                    link.classList.add('bg-teal-700', 'text-white', 'font-semibold');
+                    link.classList.remove('text-stone-200');
+                }
+            });
+            mainContent.scrollTop = 0;
+            window.location.hash = targetId;
+
+            if (window.innerWidth < 768) {
+                sidebar.classList.add('-translate-x-full');
+                sidebar.classList.remove('translate-x-0');
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = e.currentTarget.getAttribute('href').substring(1);
+                showSection(targetId);
+            });
+        });
+
+        menuToggle.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            sidebar.classList.toggle('-translate-x-full');
+            sidebar.classList.toggle('translate-x-0');
+        });
+        
+        document.addEventListener('click', function(event) {
+            if (window.innerWidth < 768) {
+                const isClickInsideSidebar = sidebar.contains(event.target);
+                const isClickOnMenuToggle = menuToggle.contains(event.target);
+                if (!isClickInsideSidebar && !isClickOnMenuToggle && sidebar.classList.contains('translate-x-0')) {
+                    sidebar.classList.add('-translate-x-full');
+                    sidebar.classList.remove('translate-x-0');
+                }
+            }
+        });
+
+        let initialSectionId = 'intro';
+        if (window.location.hash) {
+            const hashId = window.location.hash.substring(1);
+            const targetElement = document.getElementById(hashId);
+            if (targetElement && targetElement.classList.contains('content-section')) {
+                 initialSectionId = hashId;
+            }
+        }
+        showSection(initialSectionId);
+    </script>
+</body>
+</html>
